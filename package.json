@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "node tools/serve.mjs 5173",
     "check": "node tools/check-missions.mjs",
+    "share": "node tools/build-share.mjs",
     "vendor": "node tools/vendor.mjs"
   },
   "keywords": [],

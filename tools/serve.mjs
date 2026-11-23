@@ -1,6 +1,6 @@
 // Tiny zero-dependency static server for local development: node tools/serve.mjs [port]
 import { createServer } from 'node:http';
-import { readFile, stat } from 'node:fs/promises';
+import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -8,7 +8,7 @@ const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const port = Number(process.argv[2] || process.env.PORT || 5173);
 const TYPES = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8',
-  '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png',
+  '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg',
   '.ico': 'image/x-icon', '.webmanifest': 'application/manifest+json', '.md': 'text/markdown; charset=utf-8',
 };
 
@@ -16,6 +16,15 @@ createServer(async (req, res) => {
   try {
     const url = new URL(req.url, 'http://x');
     if (url.pathname === '/api/track') { req.resume(); res.writeHead(204).end(); return; }
+    // dev only: tools/og.html posts rendered share images here; writes are limited to assets/og/<name>.jpg
+    if (url.pathname === '/__save-og' && req.method === 'POST') {
+      const name = url.searchParams.get('name') || '';
+      if (!/^[a-z0-9-]+$/.test(name)) { res.writeHead(400).end('bad name'); return; }
+      const chunks = []; for await (const c of req) chunks.push(c);
+      await mkdir(join(root, 'assets', 'og'), { recursive: true });
+      await writeFile(join(root, 'assets', 'og', name + '.jpg'), Buffer.concat(chunks));
+      res.writeHead(204).end(); return;
+    }
     let p = normalize(decodeURIComponent(url.pathname)).replace(/^([/\\])+/, '');
     let file = join(root, p);
     if (!file.startsWith(root)) { res.writeHead(403).end(); return; }

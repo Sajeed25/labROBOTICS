@@ -60,3 +60,13 @@ Adding a ninth board is one new file plus a line in `js/boards/index.js`.
 
 Ideas from the original brief that are still open: an editable-code interpreter for Free build, a multimeter tool, extra modules
 (IR, relay, IMU, LCD, NeoPixel, stepper), extra boards, translations (i18n), AR view, teacher mode and an offline service worker.
+
+## Link previews
+
+Shared links show a picture card (WhatsApp, Facebook, LinkedIn, X). Each board has its own share page at
+`/b/<id>/` that carries the board's title and image, then forwards visitors to `/#<id>`.
+
+- `npm run share` rebuilds the `b/<id>/index.html` pages (run it after renaming a board or editing a tagline).
+- To redraw the 1200×630 images in `assets/og/`, run `npm run dev`, open `http://localhost:5173/tools/og.html`
+  and press **Render and save all**.
+- When deploying, upload the `b/` and `assets/og/` folders too.

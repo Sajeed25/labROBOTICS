@@ -5,8 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Robokalam Robotics Lab: learn the boards in 3D</title>
   <meta name="description" content="Explore 8 popular robotics boards in 3D: take them apart, wire them up and see them run. Lessons, quizzes, assembly and a virtual workbench.">
-  <meta property="og:title" content="Robotics Lab">
-  <meta property="og:description" content="Learn Arduino, ESP32, Raspberry Pi Pico and more in interactive 3D.">
+  <!--share-->
+  <link rel="canonical" href="https://lab.robokalam.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Robokalam Robotics Lab">
+  <meta property="og:url" content="https://lab.robokalam.com/">
+  <meta property="og:title" content="Robokalam Robotics Lab: learn the boards in 3D">
+  <meta property="og:description" content="Explore Arduino, ESP32, Raspberry Pi Pico and more in interactive 3D. Lessons, quizzes, assembly and a virtual workbench.">
+  <meta property="og:image" content="https://lab.robokalam.com/assets/og/lab.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Robokalam Robotics Lab: robotics boards in 3D">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Robokalam Robotics Lab: learn the boards in 3D">
+  <meta name="twitter:description" content="Explore Arduino, ESP32, Raspberry Pi Pico and more in interactive 3D.">
+  <meta name="twitter:image" content="https://lab.robokalam.com/assets/og/lab.jpg">
+  <!--/share-->
   <meta name="theme-color" content="#ffffff">
   <link rel="icon" type="image/png" href="assets/logo-32.png">
   <link rel="apple-touch-icon" href="assets/logo-128.png">
@@ -78,6 +92,7 @@
         <p class="tagline" id="st-tag">Where almost everyone starts</p>
         <div class="stage-actions">
           <button class="btn primary" id="st-open" type="button"><svg class="ico"><use href="#i-wrench"/></svg> Open on the workbench</button>
+          <button class="btn" id="st-share" type="button" aria-label="Share this board"><svg class="ico"><use href="#i-share"/></svg><span>Share</span></button>
           <span class="chip" id="st-level">Beginner</span>
         </div>
         <p class="site-tag">Explore 8 popular robotics boards in 3D. Take them apart, wire them up and see them run.</p>
@@ -86,6 +101,11 @@
 
       <div class="quiz-bar frost" id="quiz-bar" hidden aria-live="polite"></div>
       <div class="asm-bar frost" id="asm-bar" hidden aria-live="polite"></div>
+
+      <div class="zoom-stack frost" role="group" aria-label="Zoom">
+        <button type="button" data-zoom="in" aria-label="Zoom in">+</button>
+        <button type="button" data-zoom="out" aria-label="Zoom out">−</button>
+      </div>
 
       <div class="view-bar frost" role="toolbar" aria-label="View controls">
         <div class="seg" role="group" aria-label="Camera">

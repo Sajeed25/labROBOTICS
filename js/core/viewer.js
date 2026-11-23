@@ -61,6 +61,13 @@ export class Viewer {
     const len = THREE.MathUtils.clamp(off.length(), this.controls.minDistance, this.controls.maxDistance);
     this.camera.position.copy(this.controls.target).add(off.setLength(len));
   }
+  /** Zoom by a factor (<1 closer, >1 further), for the on-screen + / − buttons. */
+  zoomBy(k, dur = 300) {
+    this.stopTweens();
+    const t = this.controls.target.clone(), off = this.camera.position.clone().sub(t);
+    const len = THREE.MathUtils.clamp(off.length() * k, this.controls.minDistance, this.controls.maxDistance);
+    this.flyTo(t.clone().add(off.setLength(len)), t, dur);
+  }
   resize() {
     const w = this.el.clientWidth || 1, h = this.el.clientHeight || 1;
     this.renderer.setSize(w, h, false); this.camera.aspect = w / h;
@@ -105,8 +112,11 @@ export class Viewer {
   view(name, dur = 900) {
     const v = VIEWS[name] || VIEWS['34'];
     const target = new THREE.Vector3(0, (this.size?.y || 10) * .35, 0);
-    const fit = Math.max(1, 1.25 / Math.max(.4, this.camera.aspect));       // keep wide boards inside tall viewports
-    const dist = this.radius * (name === 'top' || name === 'bottom' ? 3.3 : 3.7) * fit * (this.w < 860 ? 1.15 : 1);
+    // On wide screens the height decides; on tall phone screens fit the board to the width instead,
+    // so it fills the screen rather than floating small in the middle.
+    const base = this.radius * (name === 'top' || name === 'bottom' ? 3.3 : 3.7);
+    const halfW = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)) * this.camera.aspect;
+    const dist = Math.max(base, this.radius * (name === 'front' ? .78 : .86) / halfW);
     const pos = new THREE.Vector3(...v.dir).normalize().multiplyScalar(dist).add(target);
     this.flyTo(pos, target, dur);
   }

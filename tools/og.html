@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Share image maker</title>
+  <!-- Dev tool: renders the 1200×630 link-preview images (assets/og/*.jpg).
+       Run `npm run dev`, open http://localhost:5173/tools/og.html and press "Render and save all". -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,600;6..12,700&family=Poppins:wght@600;700&display=swap">
+  <script type="importmap">
+  { "imports": { "three": "../vendor/three/build/three.module.js", "three/addons/": "../vendor/three/examples/jsm/" } }
+  </script>
+  <style>
+    body { font: 15px/1.5 'Nunito Sans', system-ui, sans-serif; margin: 24px; background: #e8eef3; color: #12304d; }
+    #out { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 16px; margin-top: 16px; }
+    #out figure { margin: 0; } #out img { width: 100%; border-radius: 8px; box-shadow: 0 2px 10px #0002; }
+    button { font: inherit; padding: 8px 16px; border-radius: 8px; border: 0; background: #0f4470; color: #fff; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <button id="go" type="button">Render and save all</button> <span id="status"></span>
+  <div id="out"></div>
+<script type="module">
+import * as THREE from 'three';
+import { BOARDS } from '../js/boards/index.js';
+import { buildBoard } from '../js/core/builder.js';
+import { studioEnv, disposeDeep } from '../js/core/viewer.js';
+
+const W = 1200, H = 630;
+const C = { navy: '#0f4470', cyan: '#1bb4e3', green: '#8cc63e', orange: '#f6a71c', ink: '#12304d', muted: '#4d6a85' };
+
+const gl = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+gl.outputColorSpace = THREE.SRGBColorSpace; gl.toneMapping = THREE.ACESFilmicToneMapping;
+const env = studioEnv(gl);
+
+// Render one board on a transparent canvas, framed to fill it.
+function renderBoard(def, w, h, dir = [0.42, 0.95, 0.75], pad = 0.92) {
+  gl.setSize(w, h, false);
+  const scene = new THREE.Scene(); scene.environment = env;
+  const light = new THREE.DirectionalLight('#fff', 1.5); light.position.set(60, 120, 80);
+  scene.add(light, new THREE.AmbientLight('#fff', .3));
+  const g = buildBoard(def); scene.add(g);
+  const sphere = new THREE.Box3().setFromObject(g).getBoundingSphere(new THREE.Sphere());
+  const cam = new THREE.PerspectiveCamera(28, w / h, 1, 5000);
+  const fov = THREE.MathUtils.degToRad(28) / 2;
+  const fit = Math.min(Math.tan(fov), Math.tan(fov) * cam.aspect);
+  const dist = sphere.radius / fit * pad;
+  const d = new THREE.Vector3(...dir).normalize().multiplyScalar(dist);
+  cam.position.copy(sphere.center).add(d); cam.lookAt(sphere.center);
+  gl.render(scene, cam);
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  c.getContext('2d').drawImage(gl.domElement, 0, 0);
+  disposeDeep(g);
+  return c;
+}
+
+const img = (src) => new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = src; });
+
+function backdrop(x) {
+  x.fillStyle = '#f5f9fc'; x.fillRect(0, 0, W, H);
+  const g = x.createRadialGradient(880, 300, 40, 880, 300, 520);
+  g.addColorStop(0, '#d7eef8'); g.addColorStop(1, '#f5f9fc00');
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  // brand stripe along the bottom, in the four logo colours
+  const cols = [C.navy, C.cyan, C.green, C.orange];
+  cols.forEach((c, i) => { x.fillStyle = c; x.fillRect(i * W / 4, H - 12, W / 4, 12); });
+}
+
+function wrap(x, text, maxW) {
+  const words = text.split(' '), lines = []; let line = '';
+  for (const w of words) { const t = line ? line + ' ' + w : w; if (x.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t; }
+  if (line) lines.push(line); return lines;
+}
+
+function fitFont(x, text, weight, family, start, maxW, min = 36) {
+  let s = start; do { x.font = `${weight} ${s}px ${family}`; s -= 2; } while (x.measureText(text).width > maxW && s > min);
+}
+
+function chip(x, text, cx, cy, fill, color) {
+  x.font = "700 22px 'Nunito Sans'"; const w = x.measureText(text).width + 32;
+  x.fillStyle = fill; x.beginPath(); x.roundRect(cx, cy, w, 42, 21); x.fill();
+  x.fillStyle = color; x.textBaseline = 'middle'; x.fillText(text, cx + 16, cy + 22); x.textBaseline = 'alphabetic';
+  return w;
+}
+
+function header(x, logo) {
+  x.drawImage(logo, 64, 54, 64, 64);
+  x.fillStyle = C.navy; x.font = "600 26px Poppins"; x.fillText('Robokalam', 142, 84);
+  x.fillStyle = C.muted; x.font = "600 22px 'Nunito Sans'"; x.fillText('Robotics Lab', 142, 112);
+}
+
+function footer(x) {
+  x.fillStyle = C.muted; x.font = "700 22px 'Nunito Sans'"; x.fillText('lab.robokalam.com', 64, H - 44);
+}
+
+async function boardCard(def, logo) {
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const x = cv.getContext('2d');
+  backdrop(x);
+  x.drawImage(renderBoard(def, 1240, 1220, [0.42, 0.95, 0.75], 1.08), 570, 4, 620, 610);
+  header(x, logo);
+  fitFont(x, def.name, 700, 'Poppins', 60, 520);
+  x.fillStyle = C.ink; x.fillText(def.name, 64, 240);
+  x.font = "600 30px 'Nunito Sans'"; x.fillStyle = C.muted;
+  const lines = wrap(x, def.tagline, 500);
+  lines.forEach((l, i) => x.fillText(l, 64, 292 + i * 40));
+  const s = def.stats; let cx = 64, cy = 292 + lines.length * 40 + 8;
+  for (const t of [`${s.clock}`, `${s.gpio} GPIO`, `${s.logic} logic`]) cx += chip(x, t, cx, cy, '#e3f1f8', C.navy) + 10;
+  const lvl = { Beginner: C.green, Intermediate: C.cyan, Advanced: C.orange }[def.level] || C.cyan;
+  chip(x, def.level, 64, cy + 54, lvl, def.level === 'Intermediate' ? '#06243d' : '#fff');
+  x.fillStyle = C.navy; x.font = "700 24px Poppins"; x.fillText('Explore it in 3D  →', 64, 540);
+  footer(x);
+  return cv;
+}
+
+async function labCard(logo) {
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const x = cv.getContext('2d');
+  backdrop(x);
+  const pick = (id) => BOARDS.find((b) => b.id === id);
+  x.drawImage(renderBoard(pick('uno'), 900, 820), 620, 40, 450, 410);
+  x.drawImage(renderBoard(pick('esp32'), 760, 620), 520, 290, 380, 310);
+  x.drawImage(renderBoard(pick('pico'), 700, 560), 840, 320, 350, 280);
+  header(x, logo);
+  x.fillStyle = C.ink; x.font = '700 58px Poppins';
+  ['Learn robotics', 'boards in 3D'].forEach((l, i) => x.fillText(l, 64, 230 + i * 70));
+  x.font = "600 28px 'Nunito Sans'"; x.fillStyle = C.muted;
+  wrap(x, 'Arduino, ESP32, Raspberry Pi Pico and more. Take them apart, wire them up and see them run.', 480)
+    .forEach((l, i) => x.fillText(l, 64, 360 + i * 38));
+  let cx = 64; for (const [t, f, c] of [['Lessons', '#e3f1f8', C.navy], ['Quizzes', '#e3f1f8', C.navy], ['Workbench', '#e3f1f8', C.navy]]) cx += chip(x, t, cx, 470, f, c) + 10;
+  footer(x);
+  return cv;
+}
+
+async function save(name, cv) {
+  const blob = await new Promise((ok) => cv.toBlob(ok, 'image/jpeg', 0.88));
+  const r = await fetch(`/__save-og?name=${name}`, { method: 'POST', body: blob });
+  const fig = document.createElement('figure');
+  fig.innerHTML = `<img alt=""><figcaption>${name}.jpg · ${(blob.size / 1024).toFixed(0)} KB · ${r.ok ? 'saved' : 'NOT saved (' + r.status + ')'}</figcaption>`;
+  fig.querySelector('img').src = URL.createObjectURL(blob);
+  document.querySelector('#out').append(fig);
+  return { name, kb: Math.round(blob.size / 1024), ok: r.ok };
+}
+
+async function run() {
+  const st = document.querySelector('#status'); document.querySelector('#out').innerHTML = '';
+  await Promise.all([document.fonts.load("700 60px Poppins"), document.fonts.load("600 26px Poppins"), document.fonts.load("700 22px 'Nunito Sans'"), document.fonts.load("600 30px 'Nunito Sans'")]);
+  const logo = await img('../assets/logo-128.png');
+  const results = [await save('lab', await labCard(logo))];
+  for (const b of BOARDS) { st.textContent = 'Rendering ' + b.name + '…'; results.push(await save(b.id, await boardCard(b, logo))); }
+  st.textContent = 'Done'; window.__og = results; return results;
+}
+document.querySelector('#go').onclick = run;
+window.runOG = run;
+</script>
+</body>
+</html>

@@ -42,7 +42,7 @@ function gloss(text) {
 
 // ───────────────────────── stage ─────────────────────────
 const stageEl = $('#sec-stage');
-const viewer = new Viewer($('#stage-canvas'), { motion, offset: (w, h) => (w > 860 ? [-w * .13, h * .02] : [0, h * .06]) });
+const viewer = new Viewer($('#stage-canvas'), { motion, offset: (w, h) => (w > 860 ? [-w * .13, h * .02] : [0, -h * .08]) });
 const labelsEl = $('#labels');
 const tipEl = $('#pin-tip');
 const cardEl = $('#part-card');
@@ -196,6 +196,17 @@ function paintPin(p) {
 
 // toolbar
 $$('.seg button').forEach((b) => b.addEventListener('click', () => { $$('.seg button').forEach((x) => x.classList.toggle('on', x === b)); viewer.view(b.dataset.view); track({ k: 'view', v: b.dataset.view }); }));
+// Share: board pages under /b/<id>/ carry their own link-preview image and title (see tools/build-share.mjs)
+$('#st-share').addEventListener('click', async () => {
+  const def = state.def, url = `https://lab.robokalam.com/b/${def.id}/`;
+  const data = { title: `${def.name} in 3D`, text: `Explore the ${def.name} in 3D on the Robokalam Robotics Lab`, url };
+  track({ k: 'share', b: def.id });
+  if (navigator.share && matchMedia('(pointer: coarse)').matches) { try { await navigator.share(data); } catch { /* cancelled */ } return; }
+  try { await navigator.clipboard.writeText(url); toast('Link copied. Paste it into WhatsApp, email or class notes.'); }
+  catch { prompt('Copy this link:', url); }
+});
+$$('.zoom-stack button').forEach((b) => b.addEventListener('click', () => viewer.zoomBy(b.dataset.zoom === 'in' ? .75 : 1.33)));
+
 $('#vb-rotate').addEventListener('click', (e) => { state.rotate = !state.rotate; viewer.controls.autoRotate = state.rotate && motion(); e.currentTarget.setAttribute('aria-pressed', String(state.rotate)); });
 $('#vb-labels').addEventListener('click', (e) => { state.labels = !state.labels; labelsEl.classList.toggle('labels-off', !state.labels); e.currentTarget.setAttribute('aria-pressed', String(state.labels)); e.currentTarget.querySelector('span').textContent = state.labels ? 'Labels' : 'Labels off'; });
 $('#vb-quiz').addEventListener('click', () => quiz.start());
