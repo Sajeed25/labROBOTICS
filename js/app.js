@@ -74,7 +74,7 @@ function loadBoard(id, { view = '34', animate = true, replace = false } = {}) {
   viewer.view(view, animate ? 1000 : 0);
   g.userData.leds.forEach((l) => setLed(l, l.always ? 1 : 0));
   const idx = BOARDS.indexOf(def);
-  $('#st-maker').textContent = `${def.maker.split(' ·')[0].toUpperCase()} · ${def.year}`;
+  $('#st-maker').textContent = `${def.maker.split(' ·')[0]} · ${def.year}`;
   $('#st-count').textContent = `${String(idx + 1).padStart(2, '0')} / ${String(BOARDS.length).padStart(2, '0')}`;
   $('#st-name').textContent = def.name; $('#st-tag').textContent = def.tagline;
   const lv = $('#st-level'); lv.textContent = def.level; lv.className = `chip lvl-${def.level}`;
@@ -82,7 +82,7 @@ function loadBoard(id, { view = '34', animate = true, replace = false } = {}) {
   $(`.pick[data-id="${def.id}"]`)?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: motion() ? 'smooth' : 'auto' });
   $$('.bname').forEach((s) => (s.textContent = def.name));
   $('#asm-count').textContent = `${def.parts.length} labelled parts`;
-  document.title = `${def.name} — Robotics Lab`;
+  document.title = `${def.name} | Robokalam Robotics Lab`;
   const url = new URL(location.href); url.hash = def.id; url.search = '';
   history[replace ? 'replaceState' : 'replaceState'](null, '', url);
   $$('.seg button').forEach((b) => b.classList.toggle('on', b.dataset.view === view));
@@ -118,7 +118,7 @@ viewer.onFrame((dt, now) => {
 });
 
 // highlight box around a part
-function highlight(partId, color = '#0d7d8a') {
+function highlight(partId, color = '#1bb4e3') {
   clearHighlight();
   const g = state.board, objs = g.userData.parts.get(partId); if (!objs) return;
   const bb = new THREE.Box3(); objs.forEach((o) => bb.expandByObject(o));
@@ -268,13 +268,13 @@ function pinoutSVG(def) {
 
 function renderLesson() {
   const def = state.def;
-  const statOrder = [['CLOCK', 'clock'], ['FLASH', 'flash'], ['RAM', 'ram'], ['GPIO PINS', 'gpio'], ['LOGIC LEVEL', 'logic'], ['PRICE', 'price']];
+  const statOrder = [['Clock', 'clock'], ['Flash', 'flash'], ['RAM', 'ram'], ['GPIO pins', 'gpio'], ['Logic level', 'logic'], ['Price', 'price']];
   const kinds = ['pwr', 'gnd', 'dig', 'ana', 'com', 'ctl', 'nc'];
   $('#lesson-root').innerHTML = `
-    <p class="sec-eyebrow"><span>02</span>LESSON</p>
+    <p class="sec-eyebrow">Lesson</p>
     <div class="lesson-head">
       <div><h2>${esc(def.name)}: what you need to know</h2>
-        <p class="kicker">IN SHORT · ${esc(def.makerLong)} · ${def.year}</p>
+        <p class="kicker">In short · ${esc(def.makerLong)} · ${def.year}</p>
         <p class="intro">${gloss(def.intro)}</p></div>
       <div class="stats">${statOrder.map(([l, k]) => `<div class="stat"><small>${l}</small><b>${esc(def.stats[k])}</b></div>`).join('')}</div>
     </div>
@@ -283,15 +283,15 @@ function renderLesson() {
     <div class="block"><h3>What’s on the board</h3><p class="sub">${def.parts.length} parts, numbered like the labels on the 3D model. Click one and the camera flies to it.</p>
       <ol class="parts">${def.parts.map((p, i) => `<li><button type="button" data-part="${p.id}"><span class="n">${i + 1}</span><span><b>${esc(p.name)}</b><span class="d">${gloss(p.desc)}</span></span></button></li>`).join('')}</ol></div>
     <div class="block"><h3>Strengths and pitfalls</h3><p class="sub">Why people love this board — and where beginners usually slip.</p>
-      <div class="sp"><div class="good"><h4>STRENGTHS</h4><ul>${def.strengths.map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>
-      <div class="warn"><h4>WATCH OUT</h4><ul>${def.pitfalls.map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div></div></div>
+      <div class="sp"><div class="good"><h4>Strengths</h4><ul>${def.strengths.map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>
+      <div class="warn"><h4>Watch out</h4><ul>${def.pitfalls.map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div></div></div>
     <div class="block"><h3>Pins</h3><p class="sub">The contacts where sensors, motors and power connect.</p>
       <div class="pin-notes">${def.pinNotes.map(([h, t]) => `<div><h4>${esc(h)}</h4><p>${gloss(t)}</p></div>`).join('')}</div>
       <p class="sub" style="margin-top:18px">Hover over any pin on the 3D board to see its name and function. Click a colour to light up those pins on the model.</p>
       <div class="legend" role="group" aria-label="Pin colours">${kinds.map((k) => `<button type="button" data-kind="${k}" aria-pressed="${state.kindShow ? String(state.kindShow.has(k)) : 'true'}"><i style="background:${KIND_COLORS[k]}"></i>${esc(KIND_NAMES[k])}</button>`).join('')}</div>
       ${pinoutSVG(def)}</div>
     <div class="block"><h3>First code</h3><p class="sub">Copy it, upload it to the board and check that everything works.</p>
-      <div class="code"><div class="code-head"><span>${esc(def.code.title)}<span class="lang">${esc(def.code.lang.toUpperCase())}</span></span><button type="button" class="copy">${icon('copy')}<span>Copy</span></button></div>
+      <div class="code"><div class="code-head"><span>${esc(def.code.title)}<span class="lang">${esc(def.code.lang)}</span></span><button type="button" class="copy">${icon('copy')}<span>Copy</span></button></div>
       <pre><code>${highlightCode(def.code.src, def.code.lang)}</code></pre></div></div>
     <div class="block"><h3>Where it shines</h3><p class="sub">Project ideas this board suits best.</p><ul class="ideas">${def.ideas.map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>
     <div class="block"><h3>Facts</h3><div class="facts">${def.facts.map((s) => `<p>${esc(s)}</p>`).join('')}</div></div>`;
@@ -328,7 +328,7 @@ const quiz = {
   ask() {
     const q = this.qs[this.i]; this.tries = 0; this.hinted = false; this.lock = false; clearHighlight();
     quizBar.hidden = false;
-    quizBar.innerHTML = `<div class="bar-top"><span>FIND THE PART · ${esc(state.def.short.toUpperCase())}</span><span>${this.i + 1} / ${this.qs.length}</span></div>
+    quizBar.innerHTML = `<div class="bar-top"><span>Find the part · ${esc(state.def.short)}</span><span>${this.i + 1} / ${this.qs.length}</span></div>
       <div class="progress"><i style="width:${(this.i / this.qs.length) * 100}%"></i></div>
       <p class="q">${esc(q.quiz || `Find the ${q.name}.`)}</p>
       <p class="feedback" id="qfb">Click the part on the 3D model. Drag to rotate, Ctrl + scroll to zoom, Bottom to flip it.</p>
@@ -339,7 +339,7 @@ const quiz = {
     const q = this.qs[this.i], fb = $('#qfb');
     if (id === q.id) {
       const first = this.tries === 0 && !this.hinted;
-      this.results.push({ p: q, ok: first }); highlight(q.id, '#2c7a4b');
+      this.results.push({ p: q, ok: first }); highlight(q.id, '#8cc63e');
       fb.className = 'feedback good'; fb.textContent = first ? 'Right on the first try!' : 'Found it.'; beep(880, .12);
       this.lock = true; setTimeout(() => this.next(), 1100);
     } else {
@@ -348,15 +348,15 @@ const quiz = {
       quizBar.classList.remove('shake'); void quizBar.offsetWidth; quizBar.classList.add('shake');
     }
   },
-  hint() { const q = this.qs[this.i]; this.hinted = true; highlight(q.id, '#d9822b'); const a = state.board.userData.anchors.get(q.id); if (a) viewer.focus(a, 2.2); $('#qfb').className = 'feedback'; $('#qfb').textContent = 'It’s in the glowing box.'; },
-  skip() { const q = this.qs[this.i]; this.results.push({ p: q, ok: false, skipped: true }); highlight(q.id, '#b24a2c'); const a = state.board.userData.anchors.get(q.id); if (a) viewer.focus(a, 2); this.lock = true; $('#qfb').className = 'feedback bad'; $('#qfb').textContent = `Here it is: the ${q.name}.`; setTimeout(() => this.next(), 1700); },
+  hint() { const q = this.qs[this.i]; this.hinted = true; highlight(q.id, '#f6a71c'); const a = state.board.userData.anchors.get(q.id); if (a) viewer.focus(a, 2.2); $('#qfb').className = 'feedback'; $('#qfb').textContent = 'It’s in the glowing box.'; },
+  skip() { const q = this.qs[this.i]; this.results.push({ p: q, ok: false, skipped: true }); highlight(q.id, '#c8412b'); const a = state.board.userData.anchors.get(q.id); if (a) viewer.focus(a, 2); this.lock = true; $('#qfb').className = 'feedback bad'; $('#qfb').textContent = `Here it is: the ${q.name}.`; setTimeout(() => this.next(), 1700); },
   next() { this.i++; if (this.i >= this.qs.length) this.finish(); else this.ask(); },
   finish() {
     const score = this.results.filter((r) => r.ok).length, secs = Math.round((performance.now() - this.t0) / 1000);
     const best = Math.max(score, progress().quiz[state.def.id] ?? 0);
     saveProgress((p) => { p.quiz[state.def.id] = best; });
     clearHighlight(); viewer.view('34');
-    quizBar.innerHTML = `<div class="bar-top"><span>RESULT · ${esc(state.def.short.toUpperCase())}</span><span>${secs} s</span></div>
+    quizBar.innerHTML = `<div class="bar-top"><span>Result · ${esc(state.def.short)}</span><span>${secs} s</span></div>
       <p class="q">${score} of ${this.qs.length} on the first try ${score === this.qs.length ? '— perfect!' : ''}</p>
       <div class="result-grid">${this.results.map((r) => `<span class="${r.ok ? 'ok' : 'no'}">${r.ok ? '✓' : '✗'} ${esc(r.p.name)}</span>`).join('')}</div>
       <p class="meta">Best for this board: ${best} / 6</p>
@@ -398,7 +398,7 @@ const asm = new Assembly(viewer, {
 });
 
 // ───────────────────────── compare ─────────────────────────
-const COLS = [['BOARD', 'name'], ['MCU', 'mcu'], ['CLOCK', 'clockHz'], ['FLASH', 'flashKB'], ['RAM', 'ramKB'], ['GPIO', 'gpioN'], ['ANALOG IN', 'analogN'], ['WIRELESS', 'wireless'], ['LOGIC', 'logic'], ['PRICE', 'priceUSD']];
+const COLS = [['Board', 'name'], ['MCU', 'mcu'], ['Clock', 'clockHz'], ['Flash', 'flashKB'], ['RAM', 'ramKB'], ['GPIO', 'gpioN'], ['Analog in', 'analogN'], ['Wireless', 'wireless'], ['Logic', 'logic'], ['Price', 'priceUSD']];
 const sortState = { key: null, dir: 1 }; const filters = new Set();
 function renderTable() {
   let rows = BOARDS.slice();
@@ -471,7 +471,7 @@ $('.brand').addEventListener('click', (e) => { e.preventDefault(); stageEl.scrol
 function applyThemeIcon() {
   const dark = document.documentElement.dataset.theme === 'dark' || (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
   const b = $('#theme-btn'); b.querySelector('use').setAttribute('href', dark ? '#i-sun' : '#i-moon'); b.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
-  $('meta[name=theme-color]').setAttribute('content', dark ? '#16191d' : '#f1eadc');
+  $('meta[name=theme-color]').setAttribute('content', dark ? '#0b1a2a' : '#ffffff');
   viewer.ground.material.opacity = dark ? .4 : .18;
 }
 if (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.dataset.theme = 'dark';

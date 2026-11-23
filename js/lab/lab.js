@@ -28,7 +28,7 @@ function boardPinRole(name, def) {
 
 function matTexture() {
   const S = 3, c = document.createElement('canvas'); c.width = BENCH.w * S; c.height = BENCH.d * S;
-  const g = c.getContext('2d'); g.fillStyle = '#2c5a48'; g.fillRect(0, 0, c.width, c.height);
+  const g = c.getContext('2d'); g.fillStyle = '#1d5a87'; g.fillRect(0, 0, c.width, c.height);
   for (let x = 0; x <= BENCH.w; x += 10) { g.strokeStyle = x % 50 ? 'rgba(255,255,255,.07)' : 'rgba(255,255,255,.16)'; g.lineWidth = x % 50 ? 1 : 2; g.beginPath(); g.moveTo(x * S, 0); g.lineTo(x * S, c.height); g.stroke(); }
   for (let z = 0; z <= BENCH.d; z += 10) { g.strokeStyle = z % 50 ? 'rgba(255,255,255,.07)' : 'rgba(255,255,255,.16)'; g.lineWidth = z % 50 ? 1 : 2; g.beginPath(); g.moveTo(0, z * S); g.lineTo(c.width, z * S); g.stroke(); }
   g.fillStyle = 'rgba(255,255,255,.4)'; g.font = `600 ${4 * S}px system-ui`; g.fillText('ESD-SAFE WORK MAT · 1 SQUARE = 10 MM', 8 * S, (BENCH.d - 6) * S);
@@ -80,7 +80,7 @@ export class Lab {
         <button class="btn small ghost" data-a="import">Load</button>
         <input type="file" accept="application/json" hidden data-file>
         <span class="grow"></span>
-        <span class="mode" data-mode>FREE BUILD</span>
+        <span class="mode" data-mode>Free build</span>
         <button class="btn small ghost" data-a="clear">${icon('trash')} Clear the bench</button>
         <button class="btn small" data-a="full">${icon('full')} <span>Full screen</span></button>
       </div>
@@ -95,7 +95,7 @@ export class Lab {
         <div class="lab-panes">
           <div class="mission-card" data-mcard></div>
           <div class="code-pane"><div class="code-tabs" data-ctabs></div><pre data-code></pre></div>
-          <div class="serial" data-serial><div class="hd"><span>SERIAL MONITOR</span><button type="button" data-a="clrserial">clear</button></div><div data-lines>Press Run to see what the boards print.</div></div>
+          <div class="serial" data-serial><div class="hd"><span>Serial monitor</span><button type="button" data-a="clrserial">clear</button></div><div data-lines>Press Run to see what the boards print.</div></div>
         </div>
       </div></div>`;
     const q = (s) => this.root.querySelector(s);
@@ -132,7 +132,7 @@ export class Lab {
     const v = this.v = new Viewer(this.el.view, { motion: () => !matchMedia('(prefers-reduced-motion: reduce)').matches });
     v.el.querySelector('canvas').setAttribute('aria-label', '3D workbench');
     v.controls.maxPolarAngle = Math.PI * .47; v.controls.enablePan = true; v.controls.minDistance = 60; v.controls.maxDistance = 900;
-    v.scene.background = new THREE.Color('#22302a');
+    v.scene.background = new THREE.Color('#0f2a43');
     v.ground.visible = false;
     const mat = new THREE.Mesh(new THREE.PlaneGeometry(BENCH.w, BENCH.d), new THREE.MeshStandardMaterial({ map: matTexture(), roughness: .95 }));
     mat.rotation.x = -Math.PI / 2; mat.receiveShadow = true; v.scene.add(mat); this.mat = mat;
@@ -160,7 +160,7 @@ export class Lab {
     if (this.sim) this.stop();
     const at = this.nextSpot();
     const it = kind === 'board' ? this.addBoard(ref, { at }) : this.addModule(ref, { at });
-    if (this.mission && !this.mission.free) { this.mission = { free: true }; this.el.mode.textContent = 'FREE BUILD'; this.renderMission(); }
+    if (this.mission && !this.mission.free) { this.mission = { free: true }; this.el.mode.textContent = 'Free build'; this.renderMission(); }
     this.select({ inst: it }); this.status(`Added ${it.label}. Click a pin to start a wire.`); this.changed();
     track({ k: 'bench-add', p: ref });
   }
@@ -331,14 +331,14 @@ export class Lab {
   sandbox(defId, { keep = false } = {}) {
     if (keep && [...this.items.values()].some((i) => i.ref === defId)) return;
     if (!keep) this.clearBench();
-    this.mission = { free: true }; this.el.mode.textContent = 'FREE BUILD';
+    this.mission = { free: true }; this.el.mode.textContent = 'Free build';
     if (!keep || !this.firstBoardId()) this.addBoard(defId, { at: keep ? this.nextSpot() : [-60, -20] }); else this.addBoard(defId, { at: this.nextSpot() });
     this.renderMission(); this.status('Pick boards and parts on the left, then click a pin to start a wire.');
     this.home(); this.changed();
   }
   startMission(id) {
     const m = missionById(id); if (!m) return;
-    this.clearBench(); this.mission = m; this.el.mode.textContent = `MISSION ${MISSIONS.indexOf(m) + 1} / ${MISSIONS.length}`;
+    this.clearBench(); this.mission = m; this.el.mode.textContent = `Mission ${MISSIONS.indexOf(m) + 1} / ${MISSIONS.length}`;
     for (const s of m.setup) s.board ? this.addBoard(s.board, { id: s.id, at: s.at, rot: s.rot || 0 }) : this.addModule(s.mod, { id: s.id, at: s.at, rot: s.rot || 0 });
     this.renderMission(); this.home(); this.status('Click a glowing pin, then the pin it should connect to.');
     this.el.lines.textContent = 'Press Run to see what the boards print.';
@@ -348,15 +348,15 @@ export class Lab {
     const m = this.mission;
     if (!m || m.free) {
       const done = Object.keys(progress().missions).length;
-      this.el.mcard.innerHTML = `<p class="kicker">FREE BUILD · SANDBOX</p><h4>Wire anything</h4><p class="goal">Add boards and parts, connect pins, then press Run. Outputs get a “Drive this pin” switch; inputs report to the serial monitor.</p><p class="meta" style="margin-top:6px">${done} of ${MISSIONS.length} missions done · <button class="btn small ghost" data-a="missions">Browse missions</button></p>`;
+      this.el.mcard.innerHTML = `<p class="kicker">Free build</p><h4>Wire anything</h4><p class="goal">Add boards and parts, connect pins, then press Run. Outputs get a “Drive this pin” switch; inputs report to the serial monitor.</p><p class="meta" style="margin-top:6px">${done} of ${MISSIONS.length} missions done · <button class="btn small ghost" data-a="missions">Browse missions</button></p>`;
       this.el.ctabs.innerHTML = ''; this.el.code.textContent = 'No code for this one.\n\nIn Free build the bench simulates the electricity itself:\n• outputs (LEDs, buzzer, servo, motor driver) get a\n  "Drive this pin" switch or slider while running\n• inputs (button, knob, light sensor) are reported\n  in the serial monitor\n• every wire is checked before power-up.';
       return;
     }
     const prog = this.missionProgress(); const left = prog.filter((p) => !p.done).length;
-    this.el.mcard.innerHTML = `<p class="kicker">${esc(m.level.toUpperCase())} · ${m.minutes} MIN</p><h4>${esc(m.title)}</h4><p class="goal">${esc(m.goal)}</p><p class="muted" style="font-size:13px;margin-top:4px">${esc(m.intro)}</p>
+    this.el.mcard.innerHTML = `<p class="kicker">${esc(m.level)} · ${m.minutes} min</p><h4>${esc(m.title)}</h4><p class="goal">${esc(m.goal)}</p><p class="muted" style="font-size:13px;margin-top:4px">${esc(m.intro)}</p>
       <ul class="chk">${prog.map((p) => `<li class="${p.done ? 'done' : ''}">${esc(this.refLabel(p.a))} → ${esc(this.refLabel(p.b))}</li>`).join('')}</ul>
       <div class="bar-actions"><button class="btn small" data-a="showme" ${left ? '' : 'disabled'}>Show me</button><button class="btn small" data-a="autowire" ${left ? '' : 'disabled'}>Wire it for me</button></div>
-      <p class="kicker" style="margin-top:10px">WHAT YOU LEARN</p><ul class="learn">${m.learn.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>`;
+      <p class="kicker" style="margin-top:10px">What you learn</p><ul class="learn">${m.learn.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>`;
     const codes = Array.isArray(m.code) ? m.code : [{ title: 'Sketch', ...m.code }];
     this.codes = codes;
     this.el.ctabs.innerHTML = codes.length > 1 ? codes.map((c, i) => `<button type="button" data-ctab="${i}">${esc(c.title)}</button>`).join('') : `<button type="button" class="on" data-ctab="0">${esc(codes[0].lang)}</button>`;
@@ -368,9 +368,9 @@ export class Lab {
   openMissions() {
     const done = progress().missions;
     const d = document.createElement('div'); d.className = 'lab-dialog'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'Missions');
-    d.innerHTML = `<div><div style="display:flex;justify-content:space-between;align-items:start;gap:10px"><div><p class="kicker">GUIDED MISSIONS · EASY → HARD</p><h3>Browse missions</h3></div><button class="btn small" data-a="closedlg">Close</button></div>
-      <div class="mgrid">${MISSIONS.map((m, i) => `<button class="mcard ${done[m.id] ? 'done' : ''}" data-mission="${m.id}"><span class="top"><span>${String(i + 1).padStart(2, '0')} · ${esc(m.level.toUpperCase())}</span><span>${done[m.id] ? '✓ DONE' : m.minutes + ' MIN'}</span></span><b>${esc(m.title)}</b><p>${esc(m.goal)}</p></button>`).join('')}
-      <button class="mcard free" data-mission="free"><span class="top"><span>SANDBOX</span><span>All 8 boards</span></span><b>Free build</b><p>No instructions — wire anything and press Run.</p></button></div></div>`;
+    d.innerHTML = `<div><div style="display:flex;justify-content:space-between;align-items:start;gap:10px"><div><p class="kicker">Guided missions, easiest first</p><h3>Browse missions</h3></div><button class="btn small" data-a="closedlg">Close</button></div>
+      <div class="mgrid">${MISSIONS.map((m, i) => `<button class="mcard ${done[m.id] ? 'done' : ''}" data-mission="${m.id}"><span class="top"><span>${String(i + 1).padStart(2, '0')} · ${esc(m.level)}</span><span>${done[m.id] ? '✓ Done' : m.minutes + ' min'}</span></span><b>${esc(m.title)}</b><p>${esc(m.goal)}</p></button>`).join('')}
+      <button class="mcard free" data-mission="free"><span class="top"><span>Sandbox</span><span>All 8 boards</span></span><b>Free build</b><p>No instructions — wire anything and press Run.</p></button></div></div>`;
     d.addEventListener('click', (e) => { if (e.target === d) this.closeDialog(); });
     this.el.view.appendChild(d); this.dialog = d; d.querySelector('.mcard')?.focus();
   }
@@ -388,7 +388,7 @@ export class Lab {
       case 'sound': this.sound = !this.sound; set('rl.sound', this.sound ? '1' : '0'); this.syncSoundBtn(); if (!this.sound) this.stopTone(); break;
       case 'lofi': toggleLofi(); break;
       case 'full': this.toggleFull(); break;
-      case 'clear': this.clearBench(); this.mission = { free: true }; this.el.mode.textContent = 'FREE BUILD'; this.renderMission(); this.status('The bench is empty. Pick boards and parts on the left.'); this.changed(); break;
+      case 'clear': this.clearBench(); this.mission = { free: true }; this.el.mode.textContent = 'Free build'; this.renderMission(); this.status('The bench is empty. Pick boards and parts on the left.'); this.changed(); break;
       case 'rotate': if (this.sel?.inst) this.rotateInst(this.sel.inst); break;
       case 'remove': if (this.sel?.inst) this.removeInst(this.sel.inst); else if (this.sel?.wire) this.removeWire(this.sel.wire); break;
       case 'showme': this.showMe(); break;
@@ -710,7 +710,7 @@ export class Lab {
     if (!data || !Array.isArray(data.items)) throw new Error('bad file');
     const mission = data.mission && missionById(data.mission);
     this.clearBench();
-    this.mission = mission || { free: true }; this.el.mode.textContent = mission ? `MISSION ${MISSIONS.indexOf(mission) + 1} / ${MISSIONS.length}` : 'FREE BUILD';
+    this.mission = mission || { free: true }; this.el.mode.textContent = mission ? `Mission ${MISSIONS.indexOf(mission) + 1} / ${MISSIONS.length}` : 'Free build';
     for (const i of data.items) i.kind === 'board' ? this.addBoard(i.ref, { id: i.id, at: [i.x, i.z], rot: i.rot }) : this.addModule(i.ref, { id: i.id, at: [i.x, i.z], rot: i.rot });
     for (const [a, b] of data.wires || []) { const pa = this.findPin(a), pb = this.findPin(b); if (pa && pb) this.addWire(pa, pb); }
     this.renderMission(); this.home();

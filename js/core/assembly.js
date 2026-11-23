@@ -29,7 +29,7 @@ export class Assembly {
     const tz = def.pcb.d / 2 + 12 + cell / 2;
     this.fx = new THREE.Group(); this.fx.userData.fx = true; board.add(this.fx);
     const trayW = cols * cell + 8, trayD = rows * cell + 8;
-    const tray = new THREE.Mesh(new THREE.BoxGeometry(trayW, 1.2, trayD), new THREE.MeshStandardMaterial({ color: '#9c927e', roughness: .85 }));
+    const tray = new THREE.Mesh(new THREE.BoxGeometry(trayW, 1.2, trayD), new THREE.MeshStandardMaterial({ color: '#c3d3e0', roughness: .85 }));
     tray.position.set(0, this.groundY + .6, tz + (rows - 1) * cell / 2); tray.receiveShadow = true; this.fx.add(tray);
     const shuffled = this.pieces.slice().sort(() => Math.random() - .5);
     shuffled.forEach((p, i) => {
@@ -39,9 +39,9 @@ export class Assembly {
       this.animateTo(p, p.tray, 500 + i * 40);
       // footprint on the bare board
       const fpGeo = new THREE.PlaneGeometry(Math.max(2, p.s.x), Math.max(2, p.s.z));
-      const fp = new THREE.Mesh(fpGeo, new THREE.MeshBasicMaterial({ color: '#0d7d8a', transparent: true, opacity: .22, depthWrite: false, side: THREE.DoubleSide }));
+      const fp = new THREE.Mesh(fpGeo, new THREE.MeshBasicMaterial({ color: '#1bb4e3', transparent: true, opacity: .22, depthWrite: false, side: THREE.DoubleSide }));
       fp.rotation.x = -Math.PI / 2; fp.position.set(p.c.x, p.bottom ? -.06 : T + .06, p.c.z);
-      const edge = new THREE.LineSegments(new THREE.EdgesGeometry(fpGeo), new THREE.LineBasicMaterial({ color: '#0d7d8a' })); fp.add(edge);
+      const edge = new THREE.LineSegments(new THREE.EdgesGeometry(fpGeo), new THREE.LineBasicMaterial({ color: '#1bb4e3' })); fp.add(edge);
       fp.userData.piece = p; p.fp = fp; this.fx.add(fp);
     });
     this.iron = this.makeIron(); this.iron.visible = false; this.fx.add(this.iron);
@@ -159,7 +159,7 @@ export class Assembly {
   render(msg, bad = false, good = false) {
     const placed = this.pieces.filter((p) => p.placed).length, sold = this.pieces.filter((p) => p.soldered).length, n = this.pieces.length;
     const bar = this.o.bar; bar.hidden = false;
-    bar.innerHTML = `<div class="bar-top"><span>ASSEMBLY · PLACED ${placed}/${n} · SOLDERED ${sold}/${n}</span><span data-time>0 s</span></div>
+    bar.innerHTML = `<div class="bar-top"><span>Assembly · placed ${placed}/${n} · soldered ${sold}/${n}</span><span data-time>0 s</span></div>
       <div class="progress"><i style="width:0%"></i></div>
       <p class="feedback ${bad ? 'bad' : good ? 'good' : ''}">${msg}</p>
       <div class="bar-actions"><button class="btn small" type="button" data-a="stop">Stop and restore</button></div>`;
@@ -170,7 +170,7 @@ export class Assembly {
     this.done = true; const secs = Math.round((performance.now() - this.t0) / 1000);
     this.o.onDone?.(secs);
     [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => this.o.beep(f, .15), i * 120));
-    this.o.bar.innerHTML = `<div class="bar-top"><span>ASSEMBLY COMPLETE</span><span>${secs} s</span></div>
+    this.o.bar.innerHTML = `<div class="bar-top"><span>Assembly complete</span><span>${secs} s</span></div>
       <p class="q" style="font-family:var(--serif);font-size:19px;margin:6px 0">The board is whole again — ${this.pieces.length} parts in ${secs} seconds.</p>
       <div class="bar-actions"><button class="btn small primary" type="button" data-a="again">Take it apart again</button><button class="btn small" type="button" data-a="stop">Close</button></div>`;
     this.o.bar.querySelector('[data-a="again"]').onclick = () => { this.stop(); this.start(); };

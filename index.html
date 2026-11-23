@@ -3,12 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Robotics Lab — learn the boards in 3D</title>
-  <meta name="description" content="Eight boards every robot builder meets — in 3D you can take apart, wire up and run. Lessons, quizzes, assembly and a virtual workbench.">
+  <title>Robokalam Robotics Lab: learn the boards in 3D</title>
+  <meta name="description" content="Explore 8 popular robotics boards in 3D: take them apart, wire them up and see them run. Lessons, quizzes, assembly and a virtual workbench.">
   <meta property="og:title" content="Robotics Lab">
   <meta property="og:description" content="Learn Arduino, ESP32, Raspberry Pi Pico and more in interactive 3D.">
-  <meta name="theme-color" content="#f1eadc">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='6' width='26' height='20' rx='3' fill='%230d7d8a'/%3E%3Crect x='11' y='12' width='10' height='8' rx='1' fill='%231d1b16'/%3E%3C/svg%3E">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" type="image/png" href="assets/logo-32.png">
+  <link rel="apple-touch-icon" href="assets/logo-128.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&family=Poppins:wght@500;600;700&display=swap">
   <link rel="stylesheet" href="css/style.css">
   <script>
     // apply saved theme before paint
@@ -44,9 +48,9 @@
   <a class="skip" href="#lesson">Skip to the lesson</a>
 
   <header class="site-header" id="site-header">
-    <a class="brand" href="#sec-stage" aria-label="Robotics Lab — back to top">
-      <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><rect x="3" y="6" width="26" height="20" rx="3" fill="var(--accent)"/><rect x="11" y="12" width="10" height="8" rx="1" fill="var(--ink)"/><path d="M7 9v3M25 9v3M7 20v3M25 20v3" stroke="var(--paper-hi)" stroke-width="2"/></svg>
-      <span>Robotics Lab</span>
+    <a class="brand" href="#sec-stage" aria-label="Robokalam Robotics Lab, back to top">
+      <img src="assets/logo-128.png" width="34" height="34" alt="">
+      <span>Robokalam <b>Robotics Lab</b></span>
     </a>
     <nav class="nav" aria-label="Sections">
       <a href="#sec-stage" data-sec="sec-stage">Boards</a>
@@ -69,14 +73,14 @@
       <div class="part-card frost" id="part-card" hidden></div>
 
       <div class="stage-info">
-        <p class="eyebrow"><span id="st-maker">ARDUINO · 2010</span> <span class="counter" id="st-count">01 / 08</span></p>
+        <p class="eyebrow"><span id="st-maker">Arduino · 2010</span> <span class="counter" id="st-count">01 / 08</span></p>
         <h1 id="st-name">Arduino Uno R3</h1>
         <p class="tagline" id="st-tag">Where almost everyone starts</p>
         <div class="stage-actions">
           <button class="btn primary" id="st-open" type="button"><svg class="ico"><use href="#i-wrench"/></svg> Open on the workbench</button>
           <span class="chip" id="st-level">Beginner</span>
         </div>
-        <p class="site-tag">Eight boards every robot builder meets — in 3D you can take apart, wire up and run.</p>
+        <p class="site-tag">Explore 8 popular robotics boards in 3D. Take them apart, wire them up and see them run.</p>
       </div>
       <p class="zoom-hint" id="zoom-hint">To zoom, scroll while holding Ctrl or pinch on the trackpad</p>
 
@@ -102,11 +106,11 @@
     <!-- ───────── workbench ───────── -->
     <section class="section" id="lab">
       <div class="wrap">
-        <p class="sec-eyebrow"><span>01</span>WORKBENCH</p>
+        <p class="sec-eyebrow">Workbench</p>
         <h2>Wire it up on the workbench</h2>
         <p class="lede">Put a board on the bench, add sensors, motors and displays, run jumper wires from pin to pin and press Run. Guided missions walk you through real circuits; Free build lets you wire anything.</p>
         <div class="feature-row">
-          <div class="feature"><h3>Missions</h3><p>Step-by-step builds — blink an LED, read a sensor, drive a motor.</p></div>
+          <div class="feature"><h3>Missions</h3><p>Step-by-step builds: blink an LED, read a sensor, drive a motor.</p></div>
           <div class="feature"><h3>Real wiring</h3><p>Click a pin, click another: the bench checks every connection before power-up.</p></div>
           <div class="feature"><h3>Room to work</h3><p>Press Full screen in the workbench toolbar to give the bench the whole display.</p></div>
         </div>
@@ -122,16 +126,16 @@
     <!-- ───────── quiz & assembly ───────── -->
     <section class="section alt" id="quiz">
       <div class="wrap">
-        <p class="sec-eyebrow"><span>03</span>QUIZ &amp; ASSEMBLY</p>
+        <p class="sec-eyebrow">Quiz and assembly</p>
         <h2>Now try it with your own hands</h2>
         <p class="lede">Reading about a board is one thing; finding the parts yourself is what makes it stick. Both exercises run on the 3D model at the top of the page and work for every board.</p>
         <div class="try-grid">
           <article class="try-card">
-            <p class="kicker">QUIZ · ABOUT A MINUTE</p>
+            <p class="kicker">Quiz · about a minute</p>
             <h3>Find the part</h3>
-            <p>We name a part — you find it on the model and click it. Rotate the board, zoom in and flip it over, just like the real thing.</p>
+            <p>We name a part, and you find it on the model and click it. Rotate the board, zoom in and flip it over, just like the real thing.</p>
             <ol class="steps">
-              <li><b>Read the question.</b> “Find the microcontroller — the brain of the board.”</li>
+              <li><b>Read the question.</b> “Find the microcontroller, the brain of the board.”</li>
               <li><b>Click the part.</b> Not sure? Take a hint, or skip and see the answer.</li>
               <li><b>See your score.</b> Only first-try answers without a hint count.</li>
             </ol>
@@ -139,7 +143,7 @@
             <p class="meta"><span>6 questions</span> · <span id="quiz-best"></span></p>
           </article>
           <article class="try-card">
-            <p class="kicker">ASSEMBLY · A FEW MINUTES</p>
+            <p class="kicker">Assembly · a few minutes</p>
             <h3>Take it apart, put it back together</h3>
             <p>The board comes apart into a tray of parts on the bench. Put every chip, connector and header back where it belongs and solder it down.</p>
             <ol class="steps">
@@ -157,12 +161,12 @@
     <!-- ───────── compare ───────── -->
     <section class="section" id="compare">
       <div class="wrap">
-        <p class="sec-eyebrow"><span>04</span>COMPARE</p>
+        <p class="sec-eyebrow">Compare</p>
         <h2>All eight, side by side</h2>
-        <p class="lede">The numbers that decide which board fits a project. Click a row to put that board on the bench — the lesson switches to it too.</p>
+        <p class="lede">The numbers that decide which board fits a project. Click a row to put that board on the bench. The lesson switches to it too.</p>
 
         <details class="wizard" id="wizard">
-          <summary>Not sure? <b>Which board should I use?</b> — answer four questions</summary>
+          <summary>Not sure? <b>Which board should I use?</b> Answer four quick questions.</summary>
           <div class="wizard-body" id="wizard-body"></div>
         </details>
 
@@ -175,14 +179,14 @@
         <div class="table-wrap">
           <table class="compare" id="compare-table"></table>
         </div>
-        <p class="note">Prices are typical street prices and vary by seller. “Logic” is the voltage of the I/O pins — never feed 5 V into a 3.3 V board.</p>
+        <p class="note">Prices are typical street prices and vary by seller. “Logic” is the voltage of the I/O pins. Never feed 5 V into a 3.3 V board.</p>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
     <div class="wrap">
-      <p><b>Robotics Lab</b> — an open learning bench for the boards robot builders meet first.</p>
+      <p><b>Robokalam Robotics Lab</b>: a hands-on learning bench for the boards young robot builders meet first.</p>
       <p class="muted">No cookies. Anonymous usage counts only. 3D models are drawn in code and are simplified for learning.</p>
       <p class="muted" id="badges"></p>
     </div>
