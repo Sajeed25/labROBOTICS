@@ -6,6 +6,11 @@
 // Batches go to POST /api/track every ~15 s, when 40 events are waiting, and when the tab is hidden.
 // On localhost nothing is sent (events are kept in window.__trackLog for debugging).
 //
+// SENDING IS SWITCHED OFF: the site is on static hosting with no /api/track endpoint.
+// To turn it back on, set ENDPOINT to '/api/track' (needs a host that runs api/track.js, e.g. Vercel)
+// or to another collector's URL.
+const ENDPOINT = null;
+//
 // Other modules report what happens with:
 //   window.dispatchEvent(new CustomEvent('site:track', { detail: { k: 'quiz-done', b: 'uno', s: 5 } }))
 (() => {
@@ -20,10 +25,10 @@
     if (!q.length) return;
     const now = performance.now(); const vis = visibleMs + (visSince != null ? now - visSince : 0);
     const body = JSON.stringify({ v, s, ref, lang: navigator.language, w: innerWidth, vis: Math.round(vis), e: q.splice(0, 40) });
-    if (local) return;
+    if (local || !ENDPOINT) return;
     try {
-      if (final && navigator.sendBeacon) navigator.sendBeacon('/api/track', new Blob([body], { type: 'application/json' }));
-      else fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }).catch(() => {});
+      if (final && navigator.sendBeacon) navigator.sendBeacon(ENDPOINT, new Blob([body], { type: 'application/json' }));
+      else fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }).catch(() => {});
     } catch { /* analytics must never break the page */ }
   }
   window.addEventListener('site:track', (e) => {
