@@ -29,8 +29,8 @@ export default {
   ],
   pinInfo: {
     VIN: { kind: 'pwr', f: '5 V in' }, RST: { kind: 'ctl', f: 'Reset (active LOW)' }, EN: { kind: 'ctl', f: 'Chip enable' },
-    CLK: { kind: 'nc', f: 'Flash SPI — do not use' }, SD0: { kind: 'nc', f: 'Flash SPI — do not use' }, CMD: { kind: 'nc', f: 'Flash SPI — do not use' }, SD1: { kind: 'nc', f: 'Flash SPI — do not use' },
-    SD2: { kind: 'nc', f: 'GPIO9 — tied to flash on most modules' }, SD3: { kind: 'nc', f: 'GPIO10 — tied to flash on most modules' }, RSV: { kind: 'nc', f: 'Reserved' }, A0: { kind: 'ana', f: 'ADC0 — the only analog input' },
+    CLK: { kind: 'nc', f: 'Flash SPI, do not use' }, SD0: { kind: 'nc', f: 'Flash SPI, do not use' }, CMD: { kind: 'nc', f: 'Flash SPI, do not use' }, SD1: { kind: 'nc', f: 'Flash SPI, do not use' },
+    SD2: { kind: 'nc', f: 'GPIO9, tied to flash on most modules' }, SD3: { kind: 'nc', f: 'GPIO10, tied to flash on most modules' }, RSV: { kind: 'nc', f: 'Reserved' }, A0: { kind: 'ana', f: 'ADC0, the only analog input' },
     D0: { f: 'GPIO16 · wake from deep sleep · no PWM / interrupts' }, D1: { kind: 'com', f: 'GPIO5 · I²C SCL (default)' }, D2: { kind: 'com', f: 'GPIO4 · I²C SDA (default)' },
     D3: { kind: 'ctl', f: 'GPIO0 · FLASH button · must be HIGH at boot' }, D4: { kind: 'ctl', f: 'GPIO2 · blue LED · must be HIGH at boot' }, D5: { f: 'GPIO14 · SPI SCK' }, D6: { f: 'GPIO12 · SPI MISO' },
     D7: { f: 'GPIO13 · SPI MOSI' }, D8: { kind: 'ctl', f: 'GPIO15 · SPI CS · must be LOW at boot' }, RX: { kind: 'com', f: 'GPIO3 · UART RX (USB)' }, TX: { kind: 'com', f: 'GPIO1 · UART TX (USB)' },
@@ -44,10 +44,10 @@ export default {
     { id: 'flash', name: 'FLASH button', desc: 'Holds GPIO0 low for manual upload mode. You can read it as a normal button (D3) in your sketch.', quiz: 'Find the FLASH button.' },
     { id: 'led', name: 'On-board LEDs', desc: 'Blue LED on the module (D4/GPIO2) and a red one on the board (D0/GPIO16). Both are “active low”: LOW turns them on.', quiz: 'Find an LED you can blink.' },
     { id: 'pinsL', name: 'Power & flash row', desc: 'VIN, GND, RST, EN, 3V3, the flash pins (leave them alone!) and A0.', quiz: 'Find the row with the analog input A0.' },
-    { id: 'pinsR', name: 'GPIO row', desc: 'D0–D8, RX and TX — the pins you actually use.', quiz: 'Find the row with D0…D8.' },
+    { id: 'pinsR', name: 'GPIO row', desc: 'D0–D8, RX and TX: the pins you actually use.', quiz: 'Find the row with D0…D8.' },
   ],
   strengths: ['Wi-Fi for the price of a sandwich', 'Breadboard-friendly, USB on board', 'Big community and lots of IoT libraries', 'Deep sleep for battery-powered sensors'],
-  pitfalls: ['Only one analog input', 'Few usable pins, and D3, D4, D8 affect booting', 'D-numbers on the board are not the GPIO numbers in code (D1 = GPIO5)', '3.3 V logic only — no 5 V signals'],
+  pitfalls: ['Only one analog input', 'Few usable pins, and D3, D4, D8 affect booting', 'D-numbers on the board are not the GPIO numbers in code (D1 = GPIO5)', '3.3 V logic only, no 5 V signals'],
   pinNotes: [
     ['Power', 'VIN takes 5 V, 3V3 is the regulated output. Several GND and 3V3 pins are all joined.'],
     ['Digital pins and PWM', 'D1–D8 do software PWM (analogWrite, 0–255 by default in newer cores). D0 can’t do PWM or interrupts.'],
@@ -71,5 +71,5 @@ void loop() {
   delay(500);
 }` },
   ideas: ['A Wi-Fi light switch or relay box', 'A room sensor that posts temperature online', 'A robot that reports its battery to your phone', 'A tiny web server with buttons', 'A doorbell that sends a notification'],
-  facts: ['The ESP8266 appeared in 2014 with a Chinese-only datasheet; hobbyists translated it themselves.', '“NodeMCU” was first a Lua firmware — the board was designed to run it.', 'Its deep-sleep current is around 20 µA: months on a battery if it wakes rarely.'],
+  facts: ['The ESP8266 appeared in 2014 with a Chinese-only datasheet; hobbyists translated it themselves.', '“NodeMCU” was first a Lua firmware, and the board was designed to run it.', 'Its deep-sleep current is around 20 µA: months on a battery if it wakes rarely.'],
 };

@@ -51,7 +51,7 @@ viewer.onPlainWheel = () => { const h = $('#zoom-hint'); if (performance.now() -
 
 function buildPicker() {
   const pk = $('#picker');
-  pk.innerHTML = BOARDS.map((b, i) => `<button class="pick" type="button" role="option" data-id="${b.id}" aria-selected="false" aria-label="${esc(b.name)} — ${esc(b.tagline)}">
+  pk.innerHTML = BOARDS.map((b, i) => `<button class="pick" type="button" role="option" data-id="${b.id}" aria-selected="false" aria-label="${esc(b.name)}: ${esc(b.tagline)}">
     <span class="thumb" data-thumb="${b.id}"></span><span><b>${esc(b.name)}</b><small>${esc(b.tagline)}</small></span></button>`).join('');
   pk.addEventListener('click', (e) => { const b = e.target.closest('.pick'); if (b) loadBoard(b.dataset.id); });
   // thumbnails render one per idle slot
@@ -251,7 +251,7 @@ function pinoutSVG(def) {
       const pin = state.board?.userData.pins.find((q) => q.name === name);
       const kind = pin?.kind || 'dig';
       const px = X(x), pz = Z(z);
-      s += `<g class="pp" data-kind="${kind}"><title>${esc(name)} — ${esc(pin?.funcs || KIND_NAMES[kind])}</title><circle cx="${px}" cy="${pz}" r="${S * .9}" fill="${KIND_COLORS[kind]}" stroke="#fff" stroke-width="1.5"/>`;
+      s += `<g class="pp" data-kind="${kind}"><title>${esc(name)}: ${esc(pin?.funcs || KIND_NAMES[kind])}</title><circle cx="${px}" cy="${pz}" r="${S * .9}" fill="${KIND_COLORS[kind]}" stroke="#fff" stroke-width="1.5"/>`;
       if (!h.noLabels) {
         const out = dx ? (z < 0 ? -1 : 1) : (x < 0 ? -1 : 1);
         const edgeRow = rows === 1 || (dx ? (z < 0 ? r === 0 : r === rows - 1) : (x < 0 ? r === 0 : r === rows - 1));
@@ -282,7 +282,7 @@ function renderLesson() {
       <dl class="specs">${def.specs.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl></div>
     <div class="block"><h3>What’s on the board</h3><p class="sub">${def.parts.length} parts, numbered like the labels on the 3D model. Click one and the camera flies to it.</p>
       <ol class="parts">${def.parts.map((p, i) => `<li><button type="button" data-part="${p.id}"><span class="n">${i + 1}</span><span><b>${esc(p.name)}</b><span class="d">${gloss(p.desc)}</span></span></button></li>`).join('')}</ol></div>
-    <div class="block"><h3>Strengths and pitfalls</h3><p class="sub">Why people love this board — and where beginners usually slip.</p>
+    <div class="block"><h3>Strengths and pitfalls</h3><p class="sub">Why people love this board, and where beginners usually slip.</p>
       <div class="sp"><div class="good"><h4>Strengths</h4><ul>${def.strengths.map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>
       <div class="warn"><h4>Watch out</h4><ul>${def.pitfalls.map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div></div></div>
     <div class="block"><h3>Pins</h3><p class="sub">The contacts where sensors, motors and power connect.</p>
@@ -344,7 +344,7 @@ const quiz = {
       this.lock = true; setTimeout(() => this.next(), 1100);
     } else {
       this.tries++; const other = state.def.parts.find((p) => p.id === id);
-      fb.className = 'feedback bad'; fb.textContent = other ? `That’s the ${other.name}. Try again.` : 'Not quite — try again.'; beep(220, .15);
+      fb.className = 'feedback bad'; fb.textContent = other ? `That’s the ${other.name}. Try again.` : 'Not quite. Try again.'; beep(220, .15);
       quizBar.classList.remove('shake'); void quizBar.offsetWidth; quizBar.classList.add('shake');
     }
   },
@@ -357,7 +357,7 @@ const quiz = {
     saveProgress((p) => { p.quiz[state.def.id] = best; });
     clearHighlight(); viewer.view('34');
     quizBar.innerHTML = `<div class="bar-top"><span>Result · ${esc(state.def.short)}</span><span>${secs} s</span></div>
-      <p class="q">${score} of ${this.qs.length} on the first try ${score === this.qs.length ? '— perfect!' : ''}</p>
+      <p class="q">${score} of ${this.qs.length} on the first try ${score === this.qs.length ? 'Perfect!' : ''}</p>
       <div class="result-grid">${this.results.map((r) => `<span class="${r.ok ? 'ok' : 'no'}">${r.ok ? '✓' : '✗'} ${esc(r.p.name)}</span>`).join('')}</div>
       <p class="meta">Best for this board: ${best} / 6</p>
       <div class="bar-actions"><button class="btn small primary" type="button" data-q="again">Play again</button><button class="btn small" type="button" data-q="lesson">Back to the lesson</button></div>`;
@@ -403,7 +403,7 @@ const sortState = { key: null, dir: 1 }; const filters = new Set();
 function renderTable() {
   let rows = BOARDS.slice();
   if (sortState.key) rows.sort((a, b) => { const k = sortState.key; const va = k === 'name' ? a.name : a.table[k], vb = k === 'name' ? b.name : b.table[k]; return (typeof va === 'number' ? va - vb : String(va).localeCompare(String(vb))) * sortState.dir; });
-  const pass = (b) => [...filters].every((f) => ({ wifi: b.table.wireless !== '—' && b.table.wireless !== 'none', '5v': b.lab.logic === 5, cheap: b.table.priceUSD < 10, linux: !!b.table.linux })[f]);
+  const pass = (b) => [...filters].every((f) => ({ wifi: !['—', 'none'].includes(b.table.wireless.toLowerCase()), '5v': b.lab.logic === 5, cheap: b.table.priceUSD < 10, linux: !!b.table.linux })[f]);
   $('#compare-table').innerHTML = `<thead><tr>${COLS.map(([l, k]) => `<th scope="col"><button type="button" data-sort="${k}" ${sortState.key === k ? `data-dir="${sortState.dir > 0 ? 'asc' : 'desc'}"` : ''}>${l}</button></th>`).join('')}</tr></thead>
     <tbody>${rows.map((b) => `<tr data-id="${b.id}" tabindex="0" class="${pass(b) ? '' : 'dim'}"><td><b>${esc(b.name)}</b><small>${esc(b.makerLong)}</small></td><td>${esc(b.table.mcu)}</td><td>${esc(b.table.clock)}</td><td>${esc(b.table.flash)}</td><td>${esc(b.table.ram)}</td><td>${esc(b.table.gpio)}</td><td>${esc(b.table.analog)}</td><td>${esc(b.table.wireless)}</td><td>${esc(b.table.logic)}</td><td>${esc(b.table.price)}</td></tr>`).join('')}</tbody>`;
   markTable();
@@ -438,7 +438,7 @@ $('#wizard-body')?.addEventListener('change', () => {
   else if (a.level === 'new' || !a.level) { id = 'uno'; why = 'The friendliest start: sturdy 5 V pins, endless tutorials, no soldering.'; }
   else { id = a.pins === 'few' ? 'nano' : 'pico'; why = id === 'nano' ? 'Uno power in a breadboard-friendly strip.' : 'Two cores, MicroPython and drag-and-drop uploads.'; }
   const b = byId(id);
-  $('#wz-out').innerHTML = `Try the <b>${esc(b.name)}</b> — ${esc(why)} <button class="btn small" type="button" data-wz="${id}">Show me ${icon('arrow')}</button>`;
+  $('#wz-out').innerHTML = `Try the <b>${esc(b.name)}</b>. ${esc(why)} <button class="btn small" type="button" data-wz="${id}">Show me ${icon('arrow')}</button>`;
 });
 $('#wizard-body')?.addEventListener('click', (e) => { const b = e.target.closest('[data-wz]'); if (b) chooseFromTable(b.dataset.wz); });
 

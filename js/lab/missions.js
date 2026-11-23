@@ -154,8 +154,8 @@ void loop() {
   },
   {
     id: 'nightlight', title: 'Night light on 3.3 V', level: 'Intermediate', minutes: 8,
-    goal: 'Switch an LED on when it gets dark — on an ESP32.',
-    intro: 'The ESP32 runs at 3.3 V, so the light sensor must be powered from 3V3, never 5 V. GPIO34 is input-only — perfect for a sensor. Its ADC reads 0–4095.',
+    goal: 'Switch an LED on when it gets dark, using an ESP32.',
+    intro: 'The ESP32 runs at 3.3 V, so the light sensor must be powered from 3V3, never 5 V. GPIO34 is input-only, which is perfect for a sensor. Its ADC reads 0–4095.',
     learn: ['3.3 V logic', '12-bit analog readings', 'Thresholds and hysteresis'],
     setup: [{ id: 'esp', board: 'esp32', at: [-40, -20] }, { id: 'ldr1', mod: 'ldr', at: [40, 70] }, { id: 'led1', mod: 'led', at: [95, 70] }],
     wires: [['esp:3V3', 'ldr1:VCC'], ['esp:GND', 'ldr1:GND'], ['esp:D34', 'ldr1:SIG'], ['esp:D4', 'led1:SIG'], ['esp:GND', 'led1:GND']],
@@ -188,7 +188,7 @@ void loop() {
     learn: ['UART: TX → RX', 'Why boards share ground', 'Sending and parsing bytes'],
     setup: [{ id: 'uno', board: 'uno', at: [-95, -25] }, { id: 'nano', board: 'nano', at: [85, -35] }, { id: 'btn1', mod: 'button', at: [-80, 85] }, { id: 'led1', mod: 'led', at: [85, 60] }],
     wires: [['uno:D1', 'nano:D0'], ['uno:GND', 'nano:GND'], ['uno:D2', 'btn1:SIG'], ['uno:GND', 'btn1:GND'], ['nano:D13', 'led1:SIG'], ['nano:GND', 'led1:GND']],
-    code: [{ title: 'Uno — sender', lang: 'Arduino C++', src: `void setup() {
+    code: [{ title: 'Uno (sender)', lang: 'Arduino C++', src: `void setup() {
   pinMode(2, INPUT_PULLUP);
   Serial.begin(9600);       // TX = D1
 }
@@ -197,7 +197,7 @@ void loop() {
   bool p = digitalRead(2) == LOW;
   Serial.write(p ? '1' : '0');
   delay(50);
-}` }, { title: 'Nano — receiver', lang: 'Arduino C++', src: `void setup() {
+}` }, { title: 'Nano (receiver)', lang: 'Arduino C++', src: `void setup() {
   pinMode(13, OUTPUT);
   Serial.begin(9600);       // RX = D0
 }
@@ -221,7 +221,7 @@ void loop() {
     learn: ['Logic levels', 'Level shifters', 'Common ground between boards'],
     setup: [{ id: 'uno', board: 'uno', at: [-110, -25] }, { id: 'ls1', mod: 'level-shifter', at: [0, 75] }, { id: 'esp', board: 'esp32', at: [100, -30] }],
     wires: [['uno:D1', 'ls1:HV1'], ['ls1:LV1', 'esp:RX2'], ['uno:5V', 'ls1:HV'], ['esp:3V3', 'ls1:LV'], ['uno:GND', 'ls1:GND'], ['esp:GND', 'ls1:GND']],
-    code: [{ title: 'Uno — commander (5 V)', lang: 'Arduino C++', src: `void setup() {
+    code: [{ title: 'Uno: commander (5 V)', lang: 'Arduino C++', src: `void setup() {
   Serial.begin(9600);        // TX = D1
 }
 
@@ -230,7 +230,7 @@ void loop() {
   delay(1000);
   Serial.println("OFF");
   delay(1000);
-}` }, { title: 'ESP32 — listener (3.3 V)', lang: 'Arduino C++', src: `void setup() {
+}` }, { title: 'ESP32: listener (3.3 V)', lang: 'Arduino C++', src: `void setup() {
   pinMode(2, OUTPUT);        // blue LED
   Serial.begin(115200);
   Serial2.begin(9600);       // RX2 = GPIO16
@@ -325,7 +325,7 @@ void loop() {
     learn: ['Brain / muscle architecture', 'Motor drivers and separate supplies', 'Simple command protocols'],
     setup: [{ id: 'pi', board: 'rpi4', at: [-120, -40] }, { id: 'mega', board: 'mega', at: [45, -55] }, { id: 'drv', mod: 'motor-driver', at: [-10, 75] }, { id: 'bat', mod: 'battery', at: [-120, 90] }, { id: 'mot', mod: 'motor', at: [110, 75] }],
     wires: [['pi:GPIO14', 'mega:D19'], ['pi:GND', 'mega:GND'], ['mega:D5', 'drv:ENA'], ['mega:D7', 'drv:IN1'], ['mega:D8', 'drv:IN2'], ['mega:5V', 'drv:VCC'], ['mega:GND', 'drv:GND'], ['bat:BAT+', 'drv:VM'], ['bat:BAT-', 'drv:GND'], ['drv:OUT1', 'mot:M+'], ['drv:OUT2', 'mot:M-']],
-    code: [{ title: 'Raspberry Pi — brain (Python)', lang: 'Python', src: `import serial, time
+    code: [{ title: 'Raspberry Pi: brain (Python)', lang: 'Python', src: `import serial, time
 link = serial.Serial("/dev/serial0", 9600)
 
 plan = [("F", 200), ("S", 0), ("B", 150), ("S", 0)]
@@ -333,7 +333,7 @@ while True:
     for cmd, speed in plan:
         link.write(f"{cmd} {speed}\\n".encode())
         print("sent", cmd, speed)
-        time.sleep(2)` }, { title: 'Arduino Mega — muscle (C++)', lang: 'Arduino C++', src: `const int ENA = 5, IN1 = 7, IN2 = 8;
+        time.sleep(2)` }, { title: 'Arduino Mega: muscle (C++)', lang: 'Arduino C++', src: `const int ENA = 5, IN1 = 7, IN2 = 8;
 
 void setup() {
   pinMode(ENA, OUTPUT);

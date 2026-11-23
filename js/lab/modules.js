@@ -82,7 +82,7 @@ export const MODULES = {
     },
   },
   buzzer: {
-    name: 'Piezo buzzer', desc: 'Makes a tone when its SIG pin is toggled — tone(pin, freq).', icon: '🔊',
+    name: 'Piezo buzzer', desc: 'Makes a tone when its SIG pin is toggled with tone(pin, freq).', icon: '🔊',
     build() {
       const { g, pins } = breakout(14, 14, '#1d1d1f', ['SIG', 'GND']);
       const b = cyl(5.5, 7, std('#141416', { roughness: .35 }), 0, PCB_H, -2); g.add(b);
@@ -107,7 +107,7 @@ export const MODULES = {
     },
   },
   motor: {
-    name: 'DC gear motor + wheel', desc: 'A yellow TT motor. Needs far more current than a pin — drive it through the motor driver.', icon: '🛞',
+    name: 'DC gear motor + wheel', desc: 'A yellow TT motor. Needs far more current than a pin, so drive it through the motor driver.', icon: '🛞',
     build() {
       const g = new THREE.Group();
       g.add(rbox(22, 22, 37, 2, std('#f1c21b', { roughness: .5 }), 0, 0, -8));

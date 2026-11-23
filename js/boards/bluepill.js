@@ -2,9 +2,9 @@ export default {
   id: 'bluepill', name: 'STM32 Blue Pill', short: 'Blue Pill', maker: 'Generic (STM32F103C8T6 board)', makerLong: 'Generic (STM32F103C8T6 board)', year: 2015,
   tagline: '32-bit power for pocket money', level: 'Advanced',
   lab: { plug: 'bread', logic: 3.3, glow: '#30e060' },
-  intro: 'A no-name board built around ST’s STM32F103 — a 72 MHz, 32-bit Arm Cortex-M3 that sits at the heart of countless drones, 3D printers and industrial gadgets. It costs about the same as a Nano but is several times faster, with more timers, more pins and a real USB peripheral. The catch: it needs a little more know-how to program, usually with an ST-Link adapter.',
+  intro: 'A no-name board built around ST’s STM32F103, a 72 MHz, 32-bit Arm Cortex-M3 that sits at the heart of countless drones, 3D printers and industrial gadgets. It costs about the same as a Nano but is several times faster, with more timers, more pins and a real USB peripheral. The catch: it needs a little more know-how to program, usually with an ST-Link adapter.',
   stats: { clock: '72 MHz', flash: '64 KB', ram: '20 KB', gpio: '32', logic: '3.3 V', price: '≈ $2–3' },
-  table: { mcu: 'STM32F103C8T6', clock: '72 MHz', clockHz: 72e6, flash: '64 KB', flashKB: 64, ram: '20 KB', ramKB: 20, gpio: '32', gpioN: 32, analog: '10 (12-bit)', analogN: 10, wireless: '—', logic: '3.3 V', price: '≈ $2–3', priceUSD: 2.5 },
+  table: { mcu: 'STM32F103C8T6', clock: '72 MHz', clockHz: 72e6, flash: '64 KB', flashKB: 64, ram: '20 KB', ramKB: 20, gpio: '32', gpioN: 32, analog: '10 (12-bit)', analogN: 10, wireless: 'None', logic: '3.3 V', price: '≈ $2–3', priceUSD: 2.5 },
   specs: [
     ['Microcontroller', 'STM32F103C8T6 (Arm Cortex-M3, 32-bit)'], ['Clock speed', '72 MHz from an 8 MHz crystal'], ['Flash memory', '64 KB (many chips actually have 128 KB)'], ['RAM', '20 KB'],
     ['GPIO', '32, many of them 5 V tolerant (marked FT)'], ['Analog inputs', '10 × 12-bit ADC'], ['Logic voltage', '3.3 V'], ['Power', 'Micro-USB 5 V, or 5 V / 3.3 V pins'],
@@ -29,7 +29,7 @@ export default {
     { type: 'male', dir: 'z', x: -25.2, z: -3.81, pins: ['3V3', 'SWIO', 'SWCLK', 'GND'], part: 'swd', noLabels: true },
   ],
   pinInfo: {
-    VB: { kind: 'pwr', f: 'VBAT — backup battery for the real-time clock' }, R: { kind: 'ctl', f: 'NRST — pull LOW to reset' }, C13: { f: 'PC13 · on-board LED (LOW = on) · weak pin' },
+    VB: { kind: 'pwr', f: 'VBAT: backup battery for the real-time clock' }, R: { kind: 'ctl', f: 'NRST: pull LOW to reset' }, C13: { f: 'PC13 · on-board LED (LOW = on) · weak pin' },
     C14: { f: 'PC14 · 32 kHz crystal pin' }, C15: { f: 'PC15 · 32 kHz crystal pin' }, A9: { kind: 'com', f: 'PA9 · USART1 TX · 5 V tolerant' }, A10: { kind: 'com', f: 'PA10 · USART1 RX · 5 V tolerant' },
     A11: { f: 'PA11 · USB D−' }, A12: { f: 'PA12 · USB D+' }, B6: { kind: 'com', f: 'PB6 · I²C1 SCL · 5 V tolerant' }, B7: { kind: 'com', f: 'PB7 · I²C1 SDA · 5 V tolerant' },
     A2: { kind: 'com', f: 'PA2 · USART2 TX · ADC2' }, A3: { kind: 'com', f: 'PA3 · USART2 RX · ADC3' }, A5: { kind: 'com', f: 'PA5 · SPI1 SCK · ADC5' }, A6: { kind: 'com', f: 'PA6 · SPI1 MISO · ADC6' }, A7: { kind: 'com', f: 'PA7 · SPI1 MOSI · ADC7' },
@@ -37,20 +37,20 @@ export default {
     SWIO: { kind: 'ctl', f: 'SWD data (ST-Link)' }, SWCLK: { kind: 'ctl', f: 'SWD clock (ST-Link)' },
   },
   parts: [
-    { id: 'mcu', name: 'STM32F103C8T6', desc: 'A 32-bit Arm Cortex-M3 at 72 MHz with hardware timers built for motor control — the same family found in many drone and printer controllers.', quiz: 'Find the STM32 microcontroller.' },
+    { id: 'mcu', name: 'STM32F103C8T6', desc: 'A 32-bit Arm Cortex-M3 at 72 MHz with hardware timers built for motor control. It is the same family found in many drone and printer controllers.', quiz: 'Find the STM32 microcontroller.' },
     { id: 'usb', name: 'Micro-USB connector', desc: 'Goes straight to the STM32’s own USB pins. With the stock firmware it only gives power until you install a USB bootloader.', quiz: 'Where does the USB cable go?' },
     { id: 'jumpers', name: 'BOOT0 / BOOT1 jumpers', desc: 'Yellow jumpers that choose where the chip starts: normal flash (BOOT0 = 0) or the built-in serial bootloader (BOOT0 = 1).', quiz: 'Find the boot-mode jumpers.' },
     { id: 'reset', name: 'RESET button', desc: 'Restarts the chip.', quiz: 'Find the reset button.' },
     { id: 'leds', name: 'Power LED and PC13 LED', desc: 'Red shows power. The green one is on PC13 and is wired “upside down”: writing LOW lights it.', quiz: 'Find the LED on PC13.' },
     { id: 'xtal', name: '8 MHz crystal', desc: 'Multiplied by 9 inside the chip to reach 72 MHz.', quiz: 'Find the main crystal.' },
     { id: 'reg', name: '3.3 V regulator', desc: 'Turns 5 V from USB or the 5V pin into 3.3 V.', quiz: 'Find the regulator.' },
-    { id: 'r10', name: 'R10 — the famous resistor', desc: 'The USB pull-up resistor. Many boards fit 10 kΩ instead of the correct 1.5 kΩ, which makes some computers refuse to recognise the board.', quiz: 'Find resistor R10 — the USB pull-up.' },
+    { id: 'r10', name: 'R10, the famous resistor', desc: 'The USB pull-up resistor. Many boards fit 10 kΩ instead of the correct 1.5 kΩ, which makes some computers refuse to recognise the board.', quiz: 'Find resistor R10, the USB pull-up.' },
     { id: 'pinsT', name: 'Top pin row', desc: 'B12–B15, A8–A15, B3–B9, 5V, GND, 3V3.', quiz: 'Find the row ending in 5V, GND, 3V3.' },
     { id: 'pinsB', name: 'Bottom pin row', desc: 'VBAT, C13–C15, the ADC-capable A0–A7 and B0/B1, B10/B11, reset and power.', quiz: 'Find the row with A0…A7.' },
     { id: 'swd', name: 'SWD header', desc: 'Four pins for an ST-Link programmer/debugger: 3V3, SWDIO, SWCLK, GND.', quiz: 'Where do you plug in an ST-Link?' },
   ],
   strengths: ['32-bit, 72 MHz Arm core for the price of a Nano clone', 'Advanced timers made for motors and encoders', 'Several 5 V-tolerant pins', 'Real hardware debugging over SWD'],
-  pitfalls: ['Usually needs an ST-Link (or USB-serial adapter) for the first upload', 'Wrong R10 resistor and some counterfeit chips cause USB trouble', 'PC13–PC15 can sink only 3 mA', 'Not every pin is 5 V tolerant — check before connecting 5 V signals'],
+  pitfalls: ['Usually needs an ST-Link (or USB-serial adapter) for the first upload', 'Wrong R10 resistor and some counterfeit chips cause USB trouble', 'PC13–PC15 can sink only 3 mA', 'Not every pin is 5 V tolerant, so check before connecting 5 V signals'],
   pinNotes: [
     ['Power', '5V feeds the regulator, 3V3 is its output, VB keeps the clock alive from a coin cell.'],
     ['Digital pins and PWM', 'Pins are named by port and number (PA0, PB12…). PWM comes from the timers on about 15 pins.'],
@@ -74,5 +74,5 @@ void loop() {
   delay(250);
 }` },
   ideas: ['A brushless motor or gimbal controller', 'A balancing robot with fast PID loops', 'A USB HID device (with a USB bootloader)', 'Reading quadrature wheel encoders with hardware timers', 'A CAN-bus node for a larger robot'],
-  facts: ['“Blue Pill” comes from its colour and pill-like shape; a black version is called the “Black Pill”.', 'Many C8 chips secretly have 128 KB of flash — the same die as the CB model.', 'STM32 chips are among the most widely used microcontrollers in industry.'],
+  facts: ['“Blue Pill” comes from its colour and pill-like shape; a black version is called the “Black Pill”.', 'Many C8 chips secretly have 128 KB of flash, the same die as the CB model.', 'STM32 chips are among the most widely used microcontrollers in industry.'],
 };

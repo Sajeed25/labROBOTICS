@@ -6,7 +6,7 @@ export default {
   lab: { plug: 'socket', logic: 5, glow: '#ffb020' },
   intro: 'A stretched Uno with the much bigger ATmega2560: 54 digital pins, 16 analog inputs, four hardware serial ports and eight times the memory. It is the board of choice for 3D printers, robot arms with many servos, and any build that keeps needing “just one more pin”. Most Uno shields still fit on the left half.',
   stats: { clock: '16 MHz', flash: '256 KB', ram: '8 KB', gpio: '54', logic: '5 V', price: '≈ $45' },
-  table: { mcu: 'ATmega2560', clock: '16 MHz', clockHz: 16e6, flash: '256 KB', flashKB: 256, ram: '8 KB', ramKB: 8, gpio: '54', gpioN: 54, analog: '16', analogN: 16, wireless: '—', logic: '5 V', price: '≈ $45', priceUSD: 45 },
+  table: { mcu: 'ATmega2560', clock: '16 MHz', clockHz: 16e6, flash: '256 KB', flashKB: 256, ram: '8 KB', ramKB: 8, gpio: '54', gpioN: 54, analog: '16', analogN: 16, wireless: 'None', logic: '5 V', price: '≈ $45', priceUSD: 45 },
   specs: [
     ['Microcontroller', 'ATmega2560 (8-bit AVR)'], ['Clock speed', '16 MHz'], ['Flash memory', '256 KB (8 KB bootloader)'], ['RAM / EEPROM', '8 KB / 4 KB'],
     ['Digital pins', '54, of which 15 with PWM'], ['Analog inputs', '16 (10-bit ADC)'], ['Logic voltage', '5 V'], ['Power', 'USB 5 V or 7–12 V via jack / Vin'],
@@ -40,14 +40,14 @@ export default {
     { type: 'male', dir: 'z', rows: 2, x: 33, z: 4.5, pins: ['MISO', 'SCK', 'RESET'], pins2: ['5V', 'MOSI', 'GND'], part: 'icsp', noLabels: true },
   ],
   pinInfo: {
-    D0: { kind: 'com', f: 'Serial RX0 — shared with USB' }, D1: { kind: 'com', f: 'Serial TX0 — shared with USB' },
+    D0: { kind: 'com', f: 'Serial RX0, shared with USB' }, D1: { kind: 'com', f: 'Serial TX0, shared with USB' },
     D14: { kind: 'com', f: 'Serial3 TX' }, D15: { kind: 'com', f: 'Serial3 RX' }, D16: { kind: 'com', f: 'Serial2 TX' }, D17: { kind: 'com', f: 'Serial2 RX' },
     D18: { kind: 'com', f: 'Serial1 TX · INT3' }, D19: { kind: 'com', f: 'Serial1 RX · INT2' }, D20: { kind: 'com', f: 'I²C SDA · INT1' }, D21: { kind: 'com', f: 'I²C SCL · INT0' },
     D2: { f: 'PWM ~ · INT4' }, D3: { f: 'PWM ~ · INT5' }, D13: { f: 'PWM ~ · LED “L”' }, D50: { kind: 'com', f: 'SPI MISO' }, D51: { kind: 'com', f: 'SPI MOSI' }, D52: { kind: 'com', f: 'SPI SCK' }, D53: { kind: 'com', f: 'SPI SS' },
     AREF: { kind: 'pwr', f: 'Analog reference' }, VIN: { f: '7–12 V in' }, '3V3': { f: '3.3 V out, max 50 mA' },
   },
   parts: [
-    { id: 'mcu', name: 'ATmega2560 microcontroller', desc: 'A 100-pin square chip with 8 KB of RAM and 256 KB of flash — room for big sketches and many libraries.', quiz: 'Find the big square microcontroller.' },
+    { id: 'mcu', name: 'ATmega2560 microcontroller', desc: 'A 100-pin square chip with 8 KB of RAM and 256 KB of flash, with room for big sketches and many libraries.', quiz: 'Find the big square microcontroller.' },
     { id: 'usb', name: 'USB-B connector', desc: 'Power, uploads and Serial Monitor, exactly like the Uno.', quiz: 'Where does the USB cable plug in?' },
     { id: 'u2', name: 'ATmega16U2 USB bridge', desc: 'Converts USB to the first serial port (Serial).', quiz: 'Find the USB-to-serial chip.' },
     { id: 'jack', name: 'Power jack, 7–12 V', desc: 'Barrel socket for an adapter or battery pack, centre positive.', quiz: 'Where would a battery pack plug in?' },
@@ -65,8 +65,8 @@ export default {
     { id: 'xtal', name: '16 MHz crystals', desc: 'Clock sources for the bridge and the main chip.', quiz: 'Find a clock crystal.' },
     { id: 'icsp', name: 'ICSP header', desc: 'Direct programming header and SPI.', quiz: 'Find the ICSP header.' },
   ],
-  strengths: ['54 digital pins and 16 analog inputs — enough for big robot arms and printers', 'Four hardware serial ports: no SoftwareSerial juggling', '8 KB RAM handles displays and large arrays', 'Uno shields mostly fit, same 5 V forgiving logic'],
-  pitfalls: ['Same 20 mA per-pin limit — dozens of LEDs still need drivers', 'SPI is on 50–53, not 11–13 like the Uno: some old shields need rewiring', 'Bigger and pricier — overkill for small robots', 'Total current from all pins together is limited (about 200 mA)'],
+  strengths: ['54 digital pins and 16 analog inputs, enough for big robot arms and printers', 'Four hardware serial ports: no SoftwareSerial juggling', '8 KB RAM handles displays and large arrays', 'Uno shields mostly fit, same 5 V forgiving logic'],
+  pitfalls: ['Same 20 mA per-pin limit, so dozens of LEDs still need drivers', 'SPI is on 50–53, not 11–13 like the Uno: some old shields need rewiring', 'Bigger and pricier, so overkill for small robots', 'Total current from all pins together is limited (about 200 mA)'],
   pinNotes: [
     ['Power', 'Identical POWER header to the Uno, plus 5V and GND at the ends of the double header.'],
     ['Digital pins and PWM', '54 pins switch 0/5 V. PWM on 2–13 and 44–46.'],
@@ -75,7 +75,7 @@ export default {
     ['Interrupts', 'Pins 2, 3, 18, 19, 20 and 21 support attachInterrupt().'],
   ],
   code: { title: 'First sketch: echo between two serial ports', lang: 'Arduino C++', src: `// Anything typed in the Serial Monitor goes out
-// on Serial1 (pins 18/19) — and back again.
+// on Serial1 (pins 18/19), and back again.
 void setup() {
   Serial.begin(9600);    // USB
   Serial1.begin(9600);   // TX1 = 18, RX1 = 19

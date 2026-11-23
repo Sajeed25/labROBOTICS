@@ -59,7 +59,7 @@ export class Lab {
     const qb = new URLSearchParams(location.search).get('bench');
     let restored = false;
     if (qb) { try { this.load(JSON.parse(decodeURIComponent(escape(atob(qb.replace(/-/g, '+').replace(/_/g, '/')))))); restored = true; toast('Loaded a shared circuit onto the bench.'); } catch (e) { console.warn(e); } }
-    if (!restored) { try { const s = JSON.parse(get('rl.bench', 'null')); if (s && s.items?.length) { this.load(s); restored = true; this.status('Welcome back — your last Free build is on the bench.'); } } catch { /* ignore */ } }
+    if (!restored) { try { const s = JSON.parse(get('rl.bench', 'null')); if (s && s.items?.length) { this.load(s); restored = true; this.status('Welcome back! Your last Free build is on the bench.'); } } catch { /* ignore */ } }
     if (!restored) this.sandbox(initial);
   }
 
@@ -281,7 +281,7 @@ export class Lab {
         else errors.push({ msg: `5 V meets 3.3 V: ${this.pinLabel(io5[0])} (5 V logic) is wired to ${this.pinLabel(io3[0])} (3.3 V). Add a level shifter.`, pins: [io5[0], io3[0]] });
       }
       const motor = net.filter((p) => p.role === 'motor'), io = net.filter((p) => p.role === 'io' || p.role === 'supply');
-      if (motor.length && io.length) errors.push({ msg: `${this.pinLabel(motor[0])} is wired straight to ${this.pinLabel(io[0])}. A motor needs far more current than a pin gives — go through the motor driver.`, pins: [motor[0], io[0]] });
+      if (motor.length && io.length) errors.push({ msg: `${this.pinLabel(motor[0])} is wired straight to ${this.pinLabel(io[0])}. A motor needs far more current than a pin gives, so go through the motor driver.`, pins: [motor[0], io[0]] });
     }
     for (const it of this.items.values()) {
       if (it.kind !== 'mod') continue;
@@ -289,7 +289,7 @@ export class Lab {
       const net = (p) => netOf.get(p) || [p];
       const grounded = (p) => net(p).some((q) => q.inst !== it && q.role === 'gnd');
       const gPins = it.pins.filter((p) => p.role === 'gnd');
-      if (gPins.length && !gPins.some(grounded) && it.ref !== 'battery') errors.push({ msg: `${it.label} has no ground connection — wire its GND to the board’s GND.`, pins: gPins });
+      if (gPins.length && !gPins.some(grounded) && it.ref !== 'battery') errors.push({ msg: `${it.label} has no ground connection. Wire its GND to the board’s GND.`, pins: gPins });
       for (const p of it.pins.filter((q) => ['vcc', 'lv', 'hv'].includes(q.role))) {
         const s = net(p).filter((q) => q.role === 'supply' || q.role === 'src');
         const needed = it.pins.some((q) => q.role === 'sig' && this.wired(q));
@@ -297,10 +297,10 @@ export class Lab {
         const v = s[0] ? (s[0].role === 'src' ? 6 : s[0].v) : null; if (v == null) continue;
         if (p.role === 'hv' && v !== 5) errors.push({ msg: `The level shifter’s HV side must go to 5 V (it is on ${v} V).`, pins: [p, s[0]] });
         if (p.role === 'lv' && v !== 3.3) errors.push({ msg: `The level shifter’s LV side must go to 3.3 V (it is on ${v} V).`, pins: [p, s[0]] });
-        if (it.ref === 'ultrasonic' && v !== 5) warnings.push({ msg: 'The HC-SR04 is a 5 V sensor — on 3.3 V it may not measure reliably.', pins: [p] });
+        if (it.ref === 'ultrasonic' && v !== 5) warnings.push({ msg: 'The HC-SR04 is a 5 V sensor; on 3.3 V it may not measure reliably.', pins: [p] });
         if (it.ref === 'servo' && s[0].inst.kind === 'board') warnings.push({ msg: `${it.label} borrows the board’s ${s[0].name}. Fine for one small servo; give bigger ones their own supply.`, pins: [p] });
-        if (it.ref === 'motor-driver' && p.name === 'VM' && s[0].inst.kind === 'board') errors.push({ msg: 'The motor supply (VM) is on a board pin. Motors need their own battery — the board can’t give that much current.', pins: [p] });
-        if (p.role === 'vcc' && v === 6 && it.ref !== 'motor-driver') errors.push({ msg: `${it.label} is powered straight from the 6 V battery — that is too much for it.`, pins: [p] });
+        if (it.ref === 'motor-driver' && p.name === 'VM' && s[0].inst.kind === 'board') errors.push({ msg: 'The motor supply (VM) is on a board pin. Motors need their own battery, because the board can’t give that much current.', pins: [p] });
+        if (p.role === 'vcc' && v === 6 && it.ref !== 'motor-driver') errors.push({ msg: `${it.label} is powered straight from the 6 V battery, which is too much for it.`, pins: [p] });
         if (p.role === 'vcc' && v === 5) {
           const sig3 = it.pins.filter((q) => q.role === 'sig').flatMap((q) => net(q)).filter((q) => q.role === 'io' && q.v === 3.3);
           if (sig3.length && ['ultrasonic', 'pot', 'ldr', 'dht11'].includes(it.ref)) errors.push({ msg: `${it.label} runs on 5 V, so its signal reaches ${this.pinLabel(sig3[0])} at 5 V. Power it from 3V3 or use a level shifter.`, pins: [p, sig3[0]] });
@@ -370,7 +370,7 @@ export class Lab {
     const d = document.createElement('div'); d.className = 'lab-dialog'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'Missions');
     d.innerHTML = `<div><div style="display:flex;justify-content:space-between;align-items:start;gap:10px"><div><p class="kicker">Guided missions, easiest first</p><h3>Browse missions</h3></div><button class="btn small" data-a="closedlg">Close</button></div>
       <div class="mgrid">${MISSIONS.map((m, i) => `<button class="mcard ${done[m.id] ? 'done' : ''}" data-mission="${m.id}"><span class="top"><span>${String(i + 1).padStart(2, '0')} · ${esc(m.level)}</span><span>${done[m.id] ? '✓ Done' : m.minutes + ' min'}</span></span><b>${esc(m.title)}</b><p>${esc(m.goal)}</p></button>`).join('')}
-      <button class="mcard free" data-mission="free"><span class="top"><span>Sandbox</span><span>All 8 boards</span></span><b>Free build</b><p>No instructions — wire anything and press Run.</p></button></div></div>`;
+      <button class="mcard free" data-mission="free"><span class="top"><span>Sandbox</span><span>All 8 boards</span></span><b>Free build</b><p>No instructions. Wire anything and press Run.</p></button></div></div>`;
     d.addEventListener('click', (e) => { if (e.target === d) this.closeDialog(); });
     this.el.view.appendChild(d); this.dialog = d; d.querySelector('.mcard')?.focus();
   }
@@ -483,7 +483,7 @@ export class Lab {
     this.select(null); if (this.pending) { this.pending = null; this.paintPins(); this.status('Wire cancelled.'); }
   }
   clickPin(p) {
-    if (!this.pending) { this.pending = p; this.paintPins(); this.status(`From <b>${esc(this.pinLabel(p))}</b> — now click the pin it should connect to. Esc cancels.`); this.beep(660, .05); return; }
+    if (!this.pending) { this.pending = p; this.paintPins(); this.status(`From <b>${esc(this.pinLabel(p))}</b>. Now click the pin it should connect to. Esc cancels.`); this.beep(660, .05); return; }
     if (p === this.pending) { this.pending = null; this.paintPins(); this.status('Wire cancelled.'); return; }
     const a = this.pending; this.pending = null;
     const w = this.addWire(a, p);
@@ -528,7 +528,7 @@ export class Lab {
     const m = this.mission;
     const prog = this.missionProgress();
     if (prog && prog.some((p) => !p.done)) { const n = prog.filter((p) => !p.done).length; this.status(`Finish the wiring first: ${n} connection(s) to go.`, 'err', '<button class="btn small" data-a="showme">Show me</button>'); return; }
-    if (!this.items.size) { this.status('The bench is empty — add a board first.'); return; }
+    if (!this.items.size) { this.status('The bench is empty. Add a board first.'); return; }
     const { errors, warnings } = this.check();
     if (errors.length) {
       this.lastErr = errors[0];
@@ -681,7 +681,7 @@ export class Lab {
         sim.ok = true; const first = !progress().missions[m.id];
         saveProgress((p) => { p.missions[m.id] = Date.now(); });
         const i = MISSIONS.indexOf(m);
-        this.status(`${icon('check')} It works. ${first ? 'Mission complete!' : ''}`, 'ok', MISSIONS[i + 1] ? '<button class="btn small primary" data-a="next">Next mission</button>' : '<button class="btn small primary" data-a="missions">All missions done — browse</button>');
+        this.status(`${icon('check')} It works. ${first ? 'Mission complete!' : ''}`, 'ok', MISSIONS[i + 1] ? '<button class="btn small primary" data-a="next">Next mission</button>' : '<button class="btn small primary" data-a="missions">All missions done! Browse</button>');
         [523, 659, 784].forEach((f, k) => setTimeout(() => this.beep(f, .12), k * 110)); track({ k: 'mission-done', m: m.id });
       }
       if (m && !m.free && !sim.ok && sim.t > 4 && m.check && !sim.hinted) { sim.hinted = true; this.status('Running. Try the controls at the bottom left.', 'ok'); }

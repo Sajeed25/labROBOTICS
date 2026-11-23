@@ -99,7 +99,7 @@ export class Assembly {
   }
   pointerUp() {
     this.v.controls.enabled = true;
-    if (this.solder && !this.solder.p.soldered) this.render('Keep holding until the joint shines — about a second.');
+    if (this.solder && !this.solder.p.soldered) this.render('Keep holding until the joint shines (about a second).');
     this.solder = null; if (this.iron) { this.iron.visible = false; this.smoke.visible = false; }
   }
   pointerMove(e) {
@@ -130,7 +130,7 @@ export class Assembly {
         this.render(`Placed. Now press and hold on the ${this.o.partName(p.id)} to solder it.`); return;
       }
       const other = this.pieces.find((q) => q !== p && !q.placed && Math.abs(pt.x - q.c.x) < q.s.x / 2 + 1 && Math.abs(pt.z - q.c.z) < q.s.z / 2 + 1);
-      this.render(other ? `That footprint belongs to the ${this.o.partName(other.id)}. Try another spot.` : 'Not there — look for the outline that matches its shape.', true);
+      this.render(other ? `That footprint belongs to the ${this.o.partName(other.id)}. Try another spot.` : 'Not there. Look for the outline that matches its shape.', true);
       this.o.beep(200, .12);
     }
     this.animateTo(p, p.tray, 300);
@@ -171,7 +171,7 @@ export class Assembly {
     this.o.onDone?.(secs);
     [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => this.o.beep(f, .15), i * 120));
     this.o.bar.innerHTML = `<div class="bar-top"><span>Assembly complete</span><span>${secs} s</span></div>
-      <p class="q" style="font-family:var(--serif);font-size:19px;margin:6px 0">The board is whole again — ${this.pieces.length} parts in ${secs} seconds.</p>
+      <p class="q" style="font-family:var(--serif);font-size:19px;margin:6px 0">The board is whole again: ${this.pieces.length} parts in ${secs} seconds.</p>
       <div class="bar-actions"><button class="btn small primary" type="button" data-a="again">Take it apart again</button><button class="btn small" type="button" data-a="stop">Close</button></div>`;
     this.o.bar.querySelector('[data-a="again"]').onclick = () => { this.stop(); this.start(); };
     this.o.bar.querySelector('[data-a="stop"]').onclick = () => this.stop();
