@@ -1,0 +1,14 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Board test</title>
+<script type="importmap">{ "imports": { "three": "../vendor/three/build/three.module.js", "three/addons/": "../vendor/three/examples/jsm/" } }</script>
+<style>body{margin:0;background:#f1eadc}#v{width:100vw;height:100vh}</style></head>
+<body><div id="v"></div>
+<script type="module">
+import { Viewer } from '../js/core/viewer.js';
+import { buildBoard } from '../js/core/builder.js';
+import { byId } from '../js/boards/index.js';
+const id = new URLSearchParams(location.search).get('b') || 'uno';
+const v = new Viewer(document.getElementById('v'));
+const g = buildBoard(byId(id)); v.setBoard(g, { animate: false }); v.view(new URLSearchParams(location.search).get('v') || '34', 0);
+window.__ok = { pins: g.userData.pins.length, parts: [...g.userData.parts.keys()] };
+</script></body></html>
