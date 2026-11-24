@@ -27,13 +27,37 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&family=Poppins:wght@500;600;700&display=swap">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=87e8f0b7">
   <script>
     // apply saved theme before paint
     try { const t = localStorage.getItem('rl.theme'); if (t) document.documentElement.dataset.theme = t; } catch {}
   </script>
   <script type="importmap">
-  { "imports": { "three": "./vendor/three/build/three.module.js", "three/addons/": "./vendor/three/examples/jsm/" } }
+  {
+    "imports": {
+      "three": "./vendor/three/build/three.module.js",
+      "three/addons/": "./vendor/three/examples/jsm/",
+      "./js/app.js": "./js/app.js?v=d65e9604",
+      "./js/boards/bluepill.js": "./js/boards/bluepill.js?v=439e2f29",
+      "./js/boards/esp32.js": "./js/boards/esp32.js?v=a67f86fd",
+      "./js/boards/index.js": "./js/boards/index.js?v=3962f312",
+      "./js/boards/mega.js": "./js/boards/mega.js?v=0e21df06",
+      "./js/boards/nano.js": "./js/boards/nano.js?v=9147a95c",
+      "./js/boards/nodemcu.js": "./js/boards/nodemcu.js?v=7d554b00",
+      "./js/boards/pico.js": "./js/boards/pico.js?v=2e2ca66b",
+      "./js/boards/rpi4.js": "./js/boards/rpi4.js?v=8841d9bf",
+      "./js/boards/uno.js": "./js/boards/uno.js?v=b70448d3",
+      "./js/core/assembly.js": "./js/core/assembly.js?v=6fd5419a",
+      "./js/core/builder.js": "./js/core/builder.js?v=fbd2069c",
+      "./js/core/store.js": "./js/core/store.js?v=0322c6a6",
+      "./js/core/viewer.js": "./js/core/viewer.js?v=fe11c213",
+      "./js/lab/lab.js": "./js/lab/lab.js?v=db6c4316",
+      "./js/lab/missions.js": "./js/lab/missions.js?v=f6e9c77c",
+      "./js/lab/modules.js": "./js/lab/modules.js?v=80c5cd33",
+      "./js/lofi.js": "./js/lofi.js?v=baec8ffd",
+      "./js/track.js": "./js/track.js?v=850db5ff"
+    }
+  }
   </script>
 </head>
 <body>
@@ -214,8 +238,8 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="js/track.js"></script>
-  <script type="module" src="js/lofi.js"></script>
-  <script type="module" src="js/app.js"></script>
+  <script type="module" src="js/track.js?v=850db5ff"></script>
+  <script type="module" src="js/lofi.js?v=baec8ffd"></script>
+  <script type="module" src="js/app.js?v=d65e9604"></script>
 </body>
 </html>

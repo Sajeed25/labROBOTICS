@@ -70,3 +70,9 @@ Shared links show a picture card (WhatsApp, Facebook, LinkedIn, X). Each board h
 - To redraw the 1200×630 images in `assets/og/`, run `npm run dev`, open `http://localhost:5173/tools/og.html`
   and press **Render and save all**.
 - When deploying, upload the `b/` and `assets/og/` folders too.
+
+## Before each deploy
+
+Run `npm run build`. It rebuilds the board share pages and stamps every CSS/JS link in `index.html` with a
+content hash (`?v=…`). The host caches CSS and JS for a week, so without the stamp, returning visitors can get the
+new page with an old stylesheet.

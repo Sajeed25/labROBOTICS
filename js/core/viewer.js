@@ -74,6 +74,10 @@ export class Viewer {
     // shift the picture so the board sits right of the title on wide screens, above the picker on narrow ones
     if (this.offset) { const [ox, oy] = this.offset(w, h); if (ox || oy) this.camera.setViewOffset(w, h, ox, oy, w, h); else this.camera.clearViewOffset(); }
     this.camera.updateProjectionMatrix();
+    // phone rotated or window resized: re-frame the board (width only, so the mobile address bar showing/hiding doesn't jump)
+    if (this.board && this.w && Math.abs(w - this.w) > 40 && !this.el.closest('.asm')) {
+      clearTimeout(this.refitT); this.refitT = setTimeout(() => this.view(this.lastView || '34', 400), 150);
+    }
     this.w = w; this.h = h;
   }
   tick() {
@@ -110,7 +114,7 @@ export class Viewer {
   /** World position of a board-local point. */
   toWorld(v) { return this.board ? new THREE.Vector3(v.x, v.y + (this.restY ?? this.board.position.y), v.z) : v.clone(); }   // board rests unrotated
   view(name, dur = 900) {
-    const v = VIEWS[name] || VIEWS['34'];
+    const v = VIEWS[name] || VIEWS['34']; this.lastView = name;
     const target = new THREE.Vector3(0, (this.size?.y || 10) * .35, 0);
     // On wide screens the height decides; on tall phone screens fit the board to the width instead,
     // so it fills the screen rather than floating small in the middle.

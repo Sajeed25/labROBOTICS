@@ -6,6 +6,8 @@
     "dev": "node tools/serve.mjs 5173",
     "check": "node tools/check-missions.mjs",
     "share": "node tools/build-share.mjs",
+    "stamp": "node tools/stamp.mjs",
+    "build": "node tools/build-share.mjs && node tools/stamp.mjs",
     "vendor": "node tools/vendor.mjs"
   },
   "keywords": [],
